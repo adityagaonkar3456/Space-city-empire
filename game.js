@@ -1,28 +1,74 @@
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
+
 const status = document.getElementById("gameStatus");
 
-status.innerText = "GAME.JS WORKING";
+status.innerText = "THREE.JS LOADING...";
 
 const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
 
-function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
+const scene = new THREE.Scene();
 
-resize();
-window.addEventListener("resize", resize);
+scene.background = new THREE.Color(0x101820);
 
-ctx.fillStyle = "#123456";
-ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-ctx.fillStyle = "white";
-ctx.font = "30px Arial";
-ctx.textAlign = "center";
-ctx.fillText(
-    "SCI-FI GAME TEST",
-    canvas.width / 2,
-    canvas.height / 2
+const camera = new THREE.PerspectiveCamera(
+    60,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    100
 );
 
-console.log("GAME.JS TEST SUCCESS");
+camera.position.set(0, 2, 6);
+
+const renderer = new THREE.WebGLRenderer({
+    canvas: canvas,
+    antialias: false
+});
+
+renderer.setSize(
+    window.innerWidth,
+    window.innerHeight
+);
+
+const light = new THREE.HemisphereLight(
+    0xffffff,
+    0x444444,
+    2
+);
+
+scene.add(light);
+
+const cube = new THREE.Mesh(
+    new THREE.BoxGeometry(2, 2, 2),
+    new THREE.MeshStandardMaterial({
+        color: 0x00aaff
+    })
+);
+
+scene.add(cube);
+
+status.innerText = "THREE.JS WORKING";
+
+function animate() {
+
+    requestAnimationFrame(animate);
+
+    cube.rotation.y += 0.01;
+    cube.rotation.x += 0.005;
+
+    renderer.render(scene, camera);
+}
+
+animate();
+
+window.addEventListener("resize", () => {
+
+    camera.aspect =
+        window.innerWidth / window.innerHeight;
+
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(
+        window.innerWidth,
+        window.innerHeight
+    );
+});
