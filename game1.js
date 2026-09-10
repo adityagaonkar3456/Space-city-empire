@@ -2,37 +2,28 @@ import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.m
 
 export function createGame1(canvas) {
 
-    // =========================
-    // SCENE
-    // =========================
-
     const scene = new THREE.Scene();
 
+    // SKY
     scene.background = new THREE.Color(0x72a9d8);
 
     scene.fog = new THREE.Fog(
         0x72a9d8,
-        80,
-        400
+        100,
+        450
     );
 
-    // =========================
     // CAMERA
-    // =========================
-
     const camera = new THREE.PerspectiveCamera(
         60,
         window.innerWidth / window.innerHeight,
         0.1,
-        500
+        600
     );
 
-    camera.position.set(0, 6, 10);
+    camera.position.set(0, 6, 12);
 
-    // =========================
     // RENDERER
-    // =========================
-
     const renderer = new THREE.WebGLRenderer({
         canvas: canvas,
         antialias: false,
@@ -45,57 +36,36 @@ export function createGame1(canvas) {
     );
 
     renderer.setPixelRatio(
-        Math.min(
-            window.devicePixelRatio || 1,
-            1.25
+        Math.min(window.devicePixelRatio || 1, 1.25)
+    );
+
+    // LIGHT
+    scene.add(
+        new THREE.HemisphereLight(
+            0xffffff,
+            0x334433,
+            2.2
         )
     );
 
-    // =========================
-    // LIGHT
-    // =========================
-
-    const skyLight =
-        new THREE.HemisphereLight(
-            0xffffff,
-            0x445544,
-            2
-        );
-
-    scene.add(skyLight);
-
-    const sun =
-        new THREE.DirectionalLight(
-            0xffffff,
-            1.5
-        );
-
-    sun.position.set(
-        80,
-        120,
-        60
+    const sun = new THREE.DirectionalLight(
+        0xffffff,
+        1.8
     );
 
+    sun.position.set(80, 120, 60);
     scene.add(sun);
 
-    // =========================
-    // GROUND
-    // =========================
+    // GREEN LAND
+    const ground = new THREE.Mesh(
+        new THREE.PlaneGeometry(500, 500),
+        new THREE.MeshLambertMaterial({
+            color: 0x3d8f42
+        })
+    );
 
-    const ground =
-        new THREE.Mesh(
-            new THREE.PlaneGeometry(
-                500,
-                500
-            ),
-
-            new THREE.MeshLambertMaterial({
-                color: 0x3d8f42
-            })
-        );
-
-    ground.rotation.x =
-        -Math.PI / 2;
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.y = 0;
 
     scene.add(ground);
 
@@ -103,103 +73,105 @@ export function createGame1(canvas) {
     // PLAYER
     // =========================
 
-    const player =
-        new THREE.Group();
+    const player = new THREE.Group();
 
-    // Body
-
-    const body =
-        new THREE.Mesh(
-            new THREE.BoxGeometry(
-                1.4,
-                2.2,
-                1
-            ),
-
-            new THREE.MeshLambertMaterial({
-                color: 0x168cff
-            })
-        );
-
-    body.position.y = 2;
-
-    player.add(body);
-
-    // Head
-
-    const head =
-        new THREE.Mesh(
-            new THREE.SphereGeometry(
-                0.7,
-                12,
-                8
-            ),
-
-            new THREE.MeshLambertMaterial({
-                color: 0xffc49b
-            })
-        );
-
-    head.position.y = 3.6;
-
-    player.add(head);
-
-    // Left leg
-
-    const leftLeg =
-        new THREE.Mesh(
-            new THREE.BoxGeometry(
-                0.5,
-                1.5,
-                0.5
-            ),
-
-            new THREE.MeshLambertMaterial({
-                color: 0x20242a
-            })
-        );
-
-    leftLeg.position.set(
-        -0.4,
-        0.75,
-        0
+    // PLAYER BODY
+    const body = new THREE.Mesh(
+        new THREE.BoxGeometry(1.5, 2.2, 1),
+        new THREE.MeshStandardMaterial({
+            color: 0x0088ff,
+            roughness: 0.6
+        })
     );
 
+    body.position.y = 2.1;
+    player.add(body);
+
+    // PLAYER HEAD
+    const head = new THREE.Mesh(
+        new THREE.SphereGeometry(0.72, 16, 12),
+        new THREE.MeshStandardMaterial({
+            color: 0xffc49b,
+            roughness: 0.7
+        })
+    );
+
+    head.position.y = 3.7;
+    player.add(head);
+
+    // VISOR
+    const visor = new THREE.Mesh(
+        new THREE.SphereGeometry(0.45, 16, 8),
+        new THREE.MeshStandardMaterial({
+            color: 0x111827,
+            metalness: 0.5,
+            roughness: 0.2
+        })
+    );
+
+    visor.scale.set(1, 0.65, 0.5);
+    visor.position.set(0, 3.75, -0.55);
+
+    player.add(visor);
+
+    // LEFT LEG
+    const leftLeg = new THREE.Mesh(
+        new THREE.BoxGeometry(0.5, 1.5, 0.55),
+        new THREE.MeshStandardMaterial({
+            color: 0x20242a
+        })
+    );
+
+    leftLeg.position.set(-0.4, 0.75, 0);
     player.add(leftLeg);
 
-    // Right leg
-
-    const rightLeg =
-        leftLeg.clone();
+    // RIGHT LEG
+    const rightLeg = leftLeg.clone();
 
     rightLeg.position.x = 0.4;
-
     player.add(rightLeg);
 
-    // Add player
+    // LEFT ARM
+    const leftArm = new THREE.Mesh(
+        new THREE.BoxGeometry(0.45, 1.5, 0.45),
+        new THREE.MeshStandardMaterial({
+            color: 0x0088ff
+        })
+    );
+
+    leftArm.position.set(-1, 2.1, 0);
+    player.add(leftArm);
+
+    // RIGHT ARM
+    const rightArm = leftArm.clone();
+
+    rightArm.position.x = 1;
+    player.add(rightArm);
+
+    // PLAYER MARKER
+    const marker = new THREE.Mesh(
+        new THREE.RingGeometry(1.2, 1.5, 32),
+        new THREE.MeshBasicMaterial({
+            color: 0xffff00,
+            side: THREE.DoubleSide
+        })
+    );
+
+    marker.rotation.x = -Math.PI / 2;
+    marker.position.y = 0.03;
+
+    player.add(marker);
+
+    // PLAYER START POSITION
+    player.position.set(0, 0, 20);
 
     scene.add(player);
 
-    player.position.set(
-        0,
-        0,
-        20
-    );
-
-    // =========================
-    // RETURN GAME OBJECTS
-    // =========================
-
     return {
-
-        THREE: THREE,
-
-        scene: scene,
-
-        camera: camera,
-
-        renderer: renderer,
-
-        player: player
+        THREE,
+        scene,
+        camera,
+        renderer,
+        player
     };
 }
