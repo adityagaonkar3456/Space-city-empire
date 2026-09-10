@@ -5,105 +5,83 @@ const status = document.getElementById("gameStatus");
 
 const game = createGame1(canvas);
 
-const player = game.player;
+const scene = game.scene;
 const camera = game.camera;
 const renderer = game.renderer;
-const scene = game.scene;
+const player = game.player;
 
-const keys = {
-    up: false,
-    down: false,
-    left: false,
-    right: false
-};
+let moving = false;
 
-function connectButton(id, key) {
+/* =========================
+   UP BUTTON
+========================= */
 
-    const button = document.getElementById(id);
+const up = document.getElementById("moveUp");
 
-    if (!button) return;
+up.addEventListener("pointerdown", (e) => {
 
-    button.addEventListener("pointerdown", function(e) {
-        e.preventDefault();
-        keys[key] = true;
-    });
+    e.preventDefault();
 
-    button.addEventListener("pointerup", function(e) {
-        e.preventDefault();
-        keys[key] = false;
-    });
+    moving = true;
 
-    button.addEventListener("pointercancel", function() {
-        keys[key] = false;
-    });
+    status.innerText = "MOVING...";
+});
 
-    button.addEventListener("pointerleave", function() {
-        keys[key] = false;
-    });
-}
+up.addEventListener("pointerup", () => {
 
-connectButton("moveUp", "up");
-connectButton("moveDown", "down");
-connectButton("moveLeft", "left");
-connectButton("moveRight", "right");
+    moving = false;
 
-function updatePlayer() {
+    status.innerText = "STOPPED";
+});
 
-    const speed = 0.15;
+up.addEventListener("pointercancel", () => {
+    moving = false;
+});
 
-    if (keys.up) {
-        player.position.z -= speed;
-    }
+/* =========================
+   MOVEMENT
+========================= */
 
-    if (keys.down) {
-        player.position.z += speed;
-    }
+function update() {
 
-    if (keys.left) {
-        player.position.x -= speed;
-    }
+    if (moving) {
 
-    if (keys.right) {
-        player.position.x += speed;
+        player.position.z -= 0.15;
     }
 }
 
-function updateCamera() {
+/* =========================
+   CAMERA
+========================= */
 
-    camera.position.x = player.position.x;
-    camera.position.y = player.position.y + 6;
-    camera.position.z = player.position.z + 10;
+camera.position.set(
+    0,
+    6,
+    10
+);
 
-    camera.lookAt(
-        player.position.x,
-        player.position.y + 1.5,
-        player.position.z
-    );
-}
+camera.lookAt(
+    0,
+    2,
+    0
+);
+
+/* =========================
+   LOOP
+========================= */
 
 function animate() {
 
     requestAnimationFrame(animate);
 
-    updatePlayer();
-    updateCamera();
+    update();
 
-    renderer.render(scene, camera);
+    renderer.render(
+        scene,
+        camera
+    );
 }
 
-status.innerText = "PLAYER MOVEMENT READY";
+status.innerText = "UP TEST READY";
 
 animate();
-
-window.addEventListener("resize", function() {
-
-    camera.aspect =
-        window.innerWidth / window.innerHeight;
-
-    camera.updateProjectionMatrix();
-
-    renderer.setSize(
-        window.innerWidth,
-        window.innerHeight
-    );
-});
