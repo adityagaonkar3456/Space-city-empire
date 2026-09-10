@@ -3,102 +3,162 @@ import { createGame1 } from "./game1.js";
 const canvas = document.getElementById("gameCanvas");
 const status = document.getElementById("gameStatus");
 
-if (!canvas) {
-    throw new Error("gameCanvas not found");
-}
-
 const game = createGame1(canvas);
 
-const {
-    scene,
-    camera,
-    renderer,
-    player
-} = game;
+const scene = game.scene;
+const camera = game.camera;
+const renderer = game.renderer;
+const player = game.player;
 
-/* =========================
-   CONTROLS
-========================= */
+// =========================
+// KEY STATE
+// =========================
 
-const keys = {};
+const keys = {
+    w: false,
+    a: false,
+    s: false,
+    d: false,
+    shift: false
+};
 
-window.addEventListener("keydown", (event) => {
-    keys[event.key.toLowerCase()] = true;
+// =========================
+// KEYBOARD
+// =========================
+
+window.addEventListener("keydown", (e) => {
+
+    const key = e.key.toLowerCase();
+
+    if (key === "w" || e.key === "arrowup") {
+        keys.w = true;
+    }
+
+    if (key === "a" || e.key === "arrowleft") {
+        keys.a = true;
+    }
+
+    if (key === "s" || e.key === "arrowdown") {
+        keys.s = true;
+    }
+
+    if (key === "d" || e.key === "arrowright") {
+        keys.d = true;
+    }
+
+    if (key === "shift") {
+        keys.shift = true;
+    }
 });
 
-window.addEventListener("keyup", (event) => {
-    keys[event.key.toLowerCase()] = false;
+window.addEventListener("keyup", (e) => {
+
+    const key = e.key.toLowerCase();
+
+    if (key === "w" || e.key === "arrowup") {
+        keys.w = false;
+    }
+
+    if (key === "a" || e.key === "arrowleft") {
+        keys.a = false;
+    }
+
+    if (key === "s" || e.key === "arrowdown") {
+        keys.s = false;
+    }
+
+    if (key === "d" || e.key === "arrowright") {
+        keys.d = false;
+    }
+
+    if (key === "shift") {
+        keys.shift = false;
+    }
 });
 
-/* Mobile buttons */
+// =========================
+// MOBILE BUTTON
+// =========================
 
-function setupButton(id, key) {
+function mobileButton(id, direction) {
 
     const button = document.getElementById(id);
 
-    if (!button) return;
+    if (!button) {
+        console.log("Button missing:", id);
+        return;
+    }
 
-    button.addEventListener("pointerdown", (event) => {
-        event.preventDefault();
-        keys[key] = true;
+    button.addEventListener("pointerdown", (e) => {
+
+        e.preventDefault();
+
+        keys[direction] = true;
+
+        button.setPointerCapture(e.pointerId);
     });
 
-    button.addEventListener("pointerup", (event) => {
-        event.preventDefault();
-        keys[key] = false;
+    button.addEventListener("pointerup", (e) => {
+
+        e.preventDefault();
+
+        keys[direction] = false;
     });
 
     button.addEventListener("pointercancel", () => {
-        keys[key] = false;
+
+        keys[direction] = false;
     });
 }
 
-setupButton("moveUp", "w");
-setupButton("moveDown", "s");
-setupButton("moveLeft", "a");
-setupButton("moveRight", "d");
-setupButton("runButton", "shift");
+// Connect buttons
 
-/* =========================
-   PLAYER MOVEMENT
-========================= */
+mobileButton("moveUp", "w");
+mobileButton("moveDown", "s");
+mobileButton("moveLeft", "a");
+mobileButton("moveRight", "d");
+mobileButton("runButton", "shift");
+
+// =========================
+// PLAYER MOVEMENT
+// =========================
 
 function updatePlayer() {
 
     let speed = 0.12;
 
-    if (keys["shift"]) {
-        speed = 0.22;
+    if (keys.shift) {
+        speed = 0.24;
     }
 
-    if (keys["w"]) {
+    if (keys.w) {
         player.position.z -= speed;
     }
 
-    if (keys["s"]) {
+    if (keys.s) {
         player.position.z += speed;
     }
 
-    if (keys["a"]) {
+    if (keys.a) {
         player.position.x -= speed;
     }
 
-    if (keys["d"]) {
+    if (keys.d) {
         player.position.x += speed;
     }
 }
 
-/* =========================
-   CAMERA
-========================= */
+// =========================
+// CAMERA
+// =========================
 
 function updateCamera() {
 
-    camera.position.x = player.position.x;
-
-    camera.position.y = player.position.y + 6;
-
-    camera.position.z = player.position.z + 10;
+    camera.position.set(
+        player.position.x,
+        player.position.y + 6,
+        player.position.z + 10
+    );
 
     camera.lookAt(
         player.position.x,
@@ -107,9 +167,17 @@ function updateCamera() {
     );
 }
 
-/* =========================
-   GAME LOOP
-========================= */
+// =========================
+// STATUS
+// =========================
+
+if (status) {
+    status.innerText = "PLAYER + CONTROLLER READY";
+}
+
+// =========================
+// GAME LOOP
+// =========================
 
 function animate() {
 
@@ -125,17 +193,11 @@ function animate() {
     );
 }
 
-/* =========================
-   STATUS
-========================= */
+animate();
 
-if (status) {
-    status.innerText = "V3.0 — GAME READY";
-}
-
-/* =========================
-   RESIZE
-========================= */
+// =========================
+// RESIZE
+// =========================
 
 window.addEventListener("resize", () => {
 
@@ -150,5 +212,3 @@ window.addEventListener("resize", () => {
         window.innerHeight
     );
 });
-
-animate();
