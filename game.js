@@ -10,16 +10,17 @@ const camera = game.camera;
 const renderer = game.renderer;
 const player = game.player;
 
+// ==========================
+// CONTROLS
+// ==========================
+
 const keys = {
     up: false,
     down: false,
     left: false,
-    right: false
+    right: false,
+    run: false
 };
-
-// ==========================
-// BUTTON CONTROL
-// ==========================
 
 function setupButton(id, key) {
 
@@ -50,6 +51,29 @@ setupButton("moveUp", "up");
 setupButton("moveDown", "down");
 setupButton("moveLeft", "left");
 setupButton("moveRight", "right");
+setupButton("runButton", "run");
+
+// ==========================
+// JUMP
+// ==========================
+
+let velocityY = 0;
+let jumping = false;
+
+const jumpButton = document.getElementById("jumpButton");
+
+if (jumpButton) {
+
+    jumpButton.addEventListener("pointerdown", (e) => {
+
+        e.preventDefault();
+
+        if (!jumping) {
+            velocityY = 0.22;
+            jumping = true;
+        }
+    });
+}
 
 // ==========================
 // KEYBOARD
@@ -68,6 +92,12 @@ window.addEventListener("keydown", (e) => {
 
     if (e.key === "ArrowRight" || e.key === "d")
         keys.right = true;
+
+    if (e.key === "Shift")
+        keys.run = true;
+
+    if (e.key === " ")
+        jump();
 });
 
 window.addEventListener("keyup", (e) => {
@@ -83,82 +113,99 @@ window.addEventListener("keyup", (e) => {
 
     if (e.key === "ArrowRight" || e.key === "d")
         keys.right = false;
+
+    if (e.key === "Shift")
+        keys.run = false;
 });
 
+function jump() {
+
+    if (!jumping) {
+        velocityY = 0.22;
+        jumping = true;
+    }
+}
+
 // ==========================
-// WALKING
+// PLAYER MOVEMENT
 // ==========================
 
 let walkTime = 0;
 
 function updatePlayer() {
 
-    const speed = 0.08;
+    const walkSpeed = 0.08;
+    const runSpeed = 0.16;
+
+    const speed = keys.run ? runSpeed : walkSpeed;
 
     let dx = 0;
     let dz = 0;
 
-    if (keys.up) {
-        dz = -1;
-    }
-
-    if (keys.down) {
-        dz = 1;
-    }
-
-    if (keys.left) {
-        dx = -1;
-    }
-
-    if (keys.right) {
-        dx = 1;
-    }
+    if (keys.up) dz = -1;
+    if (keys.down) dz = 1;
+    if (keys.left) dx = -1;
+    if (keys.right) dx = 1;
 
     const moving = dx !== 0 || dz !== 0;
 
     if (moving) {
 
-        // MOVE
+        const length = Math.sqrt(dx * dx + dz * dz);
+
+        dx /= length;
+        dz /= length;
+
         player.position.x += dx * speed;
         player.position.z += dz * speed;
 
-        // FACE WALKING DIRECTION
+        // Correct player facing
         player.rotation.y = Math.atan2(-dx, -dz);
 
-        // WALK ANIMATION
-        walkTime += 0.15;
+        walkTime += keys.run ? 0.25 : 0.15;
 
         const swing = Math.sin(walkTime) * 0.5;
 
-        if (player.children[3]) {
+        if (player.children[3])
             player.children[3].rotation.x = swing;
-        }
 
-        if (player.children[4]) {
+        if (player.children[4])
             player.children[4].rotation.x = -swing;
-        }
 
-        status.innerText = "WALKING";
+        status.innerText = keys.run ? "RUNNING" : "WALKING";
 
     } else {
 
-        // STOP WALKING
-        if (player.children[3]) {
+        if (player.children[3])
             player.children[3].rotation.x = 0;
-        }
 
-        if (player.children[4]) {
+        if (player.children[4])
             player.children[4].rotation.x = 0;
-        }
 
-        status.innerText = "STANDING";
+        status.innerText = jumping ? "JUMPING" : "STANDING";
+    }
+
+    // ======================
+    // GRAVITY
+    // ======================
+
+    if (jumping) {
+
+        velocityY -= 0.012;
+
+        player.position.y += velocityY;
+
+        if (player.position.y <= 0) {
+
+            player.position.y = 0;
+            velocityY = 0;
+            jumping = false;
+        }
     }
 }
 
-    
-
 // ==========================
-// FIXED CAMERA
+// THIRD PERSON CAMERA
 // ==========================
 
 function updateCamera() {
@@ -167,7 +214,6 @@ function updateCamera() {
     const targetY = player.position.y + 6;
     const targetZ = player.position.z + 10;
 
-    // Smooth camera follow
     camera.position.x +=
         (targetX - camera.position.x) * 0.12;
 
@@ -177,7 +223,6 @@ function updateCamera() {
     camera.position.z +=
         (targetZ - camera.position.z) * 0.12;
 
-    // Look at player
     camera.lookAt(
         player.position.x,
         player.position.y + 1.5,
@@ -188,6 +233,7 @@ function updateCamera() {
 // ==========================
 // GAME LOOP
 // ==========================
+
 function animate() {
 
     requestAnimationFrame(animate);
@@ -197,6 +243,9 @@ function animate() {
 
     renderer.render(scene, camera);
 }
+
+status.innerText = "GAME READY";
+
 animate();
 
 // ==========================
