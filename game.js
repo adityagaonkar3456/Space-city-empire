@@ -5,6 +5,7 @@ const status = document.getElementById("gameStatus");
 
 const game = createGame1(canvas);
 
+const THREE = game.THREE;
 const scene = game.scene;
 const camera = game.camera;
 const renderer = game.renderer;
@@ -17,12 +18,11 @@ const keys = {
     right: false
 };
 
-/* =========================
-   MOBILE BUTTONS
-========================= */
+// ===============================
+// MOBILE BUTTONS
+// ===============================
 
 function connectButton(id, key) {
-
     const button = document.getElementById(id);
 
     if (!button) return;
@@ -37,6 +37,10 @@ function connectButton(id, key) {
         keys[key] = false;
     });
 
+    button.addEventListener("pointerleave", () => {
+        keys[key] = false;
+    });
+
     button.addEventListener("pointercancel", () => {
         keys[key] = false;
     });
@@ -47,9 +51,9 @@ connectButton("moveDown", "down");
 connectButton("moveLeft", "left");
 connectButton("moveRight", "right");
 
-/* =========================
-   KEYBOARD
-========================= */
+// ===============================
+// KEYBOARD
+// ===============================
 
 window.addEventListener("keydown", (e) => {
 
@@ -81,45 +85,68 @@ window.addEventListener("keyup", (e) => {
         keys.right = false;
 });
 
-/* =========================
-   PLAYER
-========================= */
+// ===============================
+// PLAYER MOVEMENT
+// ===============================
 
 function updatePlayer() {
 
-    const speed = 0.15;
+    const speed = 0.18;
 
-    if (keys.up)
-        player.position.z -= speed;
+    let x = 0;
+    let z = 0;
 
-    if (keys.down)
-        player.position.z += speed;
+    if (keys.up) {
+        z -= 1;
+    }
 
-    if (keys.left)
-        player.position.x -= speed;
+    if (keys.down) {
+        z += 1;
+    }
 
-    if (keys.right)
-        player.position.x += speed;
+    if (keys.left) {
+        x -= 1;
+    }
+
+    if (keys.right) {
+        x += 1;
+    }
+
+    // No movement
+    if (x === 0 && z === 0) {
+        return;
+    }
+
+    // Normalize diagonal movement
+    const length = Math.sqrt(x * x + z * z);
+
+    x /= length;
+    z /= length;
+
+    // MOVE PLAYER
+    player.position.x += x * speed;
+    player.position.z += z * speed;
+
+    // ROTATE PLAYER
+    player.rotation.y = Math.atan2(x, z);
 }
 
-/* =========================
-   CAMERA FOLLOW
-========================= */
+// ===============================
+// CAMERA FOLLOW
+// ===============================
 
 function updateCamera() {
 
-    const targetX = player.position.x;
-    const targetY = player.position.y + 6;
-    const targetZ = player.position.z + 10;
+    const desiredPosition = new THREE.Vector3(
+        player.position.x,
+        player.position.y + 5.5,
+        player.position.z + 9
+    );
 
-    camera.position.x +=
-        (targetX - camera.position.x) * 0.12;
-
-    camera.position.y +=
-        (targetY - camera.position.y) * 0.12;
-
-    camera.position.z +=
-        (targetZ - camera.position.z) * 0.12;
+    camera.position.lerp(
+        desiredPosition,
+        0.12
+    );
 
     camera.lookAt(
         player.position.x,
@@ -128,9 +155,9 @@ function updateCamera() {
     );
 }
 
-/* =========================
-   GAME LOOP
-========================= */
+// ===============================
+// GAME LOOP
+// ===============================
 
 function animate() {
 
@@ -142,13 +169,13 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-status.innerText = "PLAYER READY";
+status.innerText = "PLAYER MOVEMENT READY";
 
 animate();
 
-/* =========================
-   RESIZE
-========================= */
+// ===============================
+// RESIZE
+// ===============================
 
 window.addEventListener("resize", () => {
 
