@@ -10,120 +10,98 @@ const camera = game.camera;
 const renderer = game.renderer;
 const player = game.player;
 
-// =====================
-// CONTROLS
-// =====================
+let moving = false;
 
-const keys = {
-    up: false,
-    down: false,
-    left: false,
-    right: false
-};
+// =========================
+// MOBILE CONTROLS
+// =========================
 
-function button(id, key) {
+function setupButton(id, action) {
 
-    const el = document.getElementById(id);
+    const btn = document.getElementById(id);
 
-    if (!el) return;
+    if (!btn) return;
 
-    el.addEventListener("pointerdown", function(e) {
+    btn.addEventListener("pointerdown", function(e) {
         e.preventDefault();
-        keys[key] = true;
+        moving = true;
+        action(true);
     });
 
-    el.addEventListener("pointerup", function(e) {
+    btn.addEventListener("pointerup", function(e) {
         e.preventDefault();
-        keys[key] = false;
+        moving = false;
+        action(false);
     });
 
-    el.addEventListener("pointercancel", function() {
-        keys[key] = false;
+    btn.addEventListener("pointercancel", function() {
+        moving = false;
+        action(false);
     });
 
-    el.addEventListener("pointerleave", function() {
-        keys[key] = false;
+    btn.addEventListener("pointerleave", function() {
+        moving = false;
+        action(false);
     });
 }
 
-button("moveUp", "up");
-button("moveDown", "down");
-button("moveLeft", "left");
-button("moveRight", "right");
-
-// =====================
-// KEYBOARD
-// =====================
-
-window.addEventListener("keydown", function(e) {
-
-    if (e.key === "ArrowUp" || e.key === "w")
-        keys.up = true;
-
-    if (e.key === "ArrowDown" || e.key === "s")
-        keys.down = true;
-
-    if (e.key === "ArrowLeft" || e.key === "a")
-        keys.left = true;
-
-    if (e.key === "ArrowRight" || e.key === "d")
-        keys.right = true;
+setupButton("moveUp", (v) => {
+    window.moveUp = v;
 });
 
-window.addEventListener("keyup", function(e) {
-
-    if (e.key === "ArrowUp" || e.key === "w")
-        keys.up = false;
-
-    if (e.key === "ArrowDown" || e.key === "s")
-        keys.down = false;
-
-    if (e.key === "ArrowLeft" || e.key === "a")
-        keys.left = false;
-
-    if (e.key === "ArrowRight" || e.key === "d")
-        keys.right = false;
+setupButton("moveDown", (v) => {
+    window.moveDown = v;
 });
 
-// =====================
+setupButton("moveLeft", (v) => {
+    window.moveLeft = v;
+});
+
+setupButton("moveRight", (v) => {
+    window.moveRight = v;
+});
+
+window.moveUp = false;
+window.moveDown = false;
+window.moveLeft = false;
+window.moveRight = false;
+
+// =========================
 // PLAYER MOVEMENT
-// =====================
+// =========================
 
 function updatePlayer() {
 
-    const speed = 0.18;
+    const speed = 0.25;
 
-    if (keys.up) {
+    if (window.moveUp) {
         player.position.z -= speed;
     }
 
-    if (keys.down) {
+    if (window.moveDown) {
         player.position.z += speed;
     }
 
-    if (keys.left) {
+    if (window.moveLeft) {
         player.position.x -= speed;
     }
 
-    if (keys.right) {
+    if (window.moveRight) {
         player.position.x += speed;
     }
 }
 
-// =====================
-// CAMERA FOLLOW
-// =====================
+// =========================
+// CAMERA
+// =========================
 
 function updateCamera() {
 
-    camera.position.x =
-        player.position.x;
-
-    camera.position.y =
-        player.position.y + 6;
-
-    camera.position.z =
-        player.position.z + 10;
+    camera.position.set(
+        player.position.x,
+        player.position.y + 6,
+        player.position.z + 10
+    );
 
     camera.lookAt(
         player.position.x,
@@ -132,9 +110,9 @@ function updateCamera() {
     );
 }
 
-// =====================
+// =========================
 // GAME LOOP
-// =====================
+// =========================
 
 function animate() {
 
@@ -146,13 +124,13 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-status.innerText = "GAME READY";
+status.innerText = "PLAYER READY";
 
 animate();
 
-// =====================
+// =========================
 // RESIZE
-// =====================
+// =========================
 
 window.addEventListener("resize", function() {
 
