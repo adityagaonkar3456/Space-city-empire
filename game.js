@@ -161,27 +161,42 @@ function updatePlayer() {
 // FIXED CAMERA
 // ==========================
 
-camera.position.set(0, 6, 30);
+function updateCamera() {
 
-camera.lookAt(
-    player.position.x,
-    player.position.y + 1.5,
-    player.position.z
-);
+    const targetX = player.position.x;
+    const targetY = player.position.y + 6;
+    const targetZ = player.position.z + 10;
+
+    // Smooth camera follow
+    camera.position.x +=
+        (targetX - camera.position.x) * 0.12;
+
+    camera.position.y +=
+        (targetY - camera.position.y) * 0.12;
+
+    camera.position.z +=
+        (targetZ - camera.position.z) * 0.12;
+
+    // Look at player
+    camera.lookAt(
+        player.position.x,
+        player.position.y + 1.5,
+        player.position.z
+    );
+}
 
 // ==========================
 // GAME LOOP
 // ==========================
-
 function animate() {
 
     requestAnimationFrame(animate);
 
     updatePlayer();
+    updateCamera();
 
     renderer.render(scene, camera);
 }
-
 animate();
 
 // ==========================
