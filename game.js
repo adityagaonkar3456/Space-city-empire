@@ -1,69 +1,147 @@
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
-
-const status = document.getElementById("gameStatus");
-
-status.innerText = "THREE.JS LOADING...";
+import { createGame1 } from "./game1.js";
 
 const canvas = document.getElementById("gameCanvas");
+const status = document.getElementById("gameStatus");
 
-const scene = new THREE.Scene();
+if (!canvas) {
+    throw new Error("gameCanvas not found");
+}
 
-scene.background = new THREE.Color(0x101820);
+const game = createGame1(canvas);
 
-const camera = new THREE.PerspectiveCamera(
-    60,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    100
-);
+const {
+    scene,
+    camera,
+    renderer,
+    player
+} = game;
 
-camera.position.set(0, 2, 6);
+/* =========================
+   CONTROLS
+========================= */
 
-const renderer = new THREE.WebGLRenderer({
-    canvas: canvas,
-    antialias: false
+const keys = {};
+
+window.addEventListener("keydown", (event) => {
+    keys[event.key.toLowerCase()] = true;
 });
 
-renderer.setSize(
-    window.innerWidth,
-    window.innerHeight
-);
+window.addEventListener("keyup", (event) => {
+    keys[event.key.toLowerCase()] = false;
+});
 
-const light = new THREE.HemisphereLight(
-    0xffffff,
-    0x444444,
-    2
-);
+/* Mobile buttons */
 
-scene.add(light);
+function setupButton(id, key) {
 
-const cube = new THREE.Mesh(
-    new THREE.BoxGeometry(2, 2, 2),
-    new THREE.MeshStandardMaterial({
-        color: 0x00aaff
-    })
-);
+    const button = document.getElementById(id);
 
-scene.add(cube);
+    if (!button) return;
 
-status.innerText = "THREE.JS WORKING";
+    button.addEventListener("pointerdown", (event) => {
+        event.preventDefault();
+        keys[key] = true;
+    });
+
+    button.addEventListener("pointerup", (event) => {
+        event.preventDefault();
+        keys[key] = false;
+    });
+
+    button.addEventListener("pointercancel", () => {
+        keys[key] = false;
+    });
+}
+
+setupButton("moveUp", "w");
+setupButton("moveDown", "s");
+setupButton("moveLeft", "a");
+setupButton("moveRight", "d");
+setupButton("runButton", "shift");
+
+/* =========================
+   PLAYER MOVEMENT
+========================= */
+
+function updatePlayer() {
+
+    let speed = 0.12;
+
+    if (keys["shift"]) {
+        speed = 0.22;
+    }
+
+    if (keys["w"]) {
+        player.position.z -= speed;
+    }
+
+    if (keys["s"]) {
+        player.position.z += speed;
+    }
+
+    if (keys["a"]) {
+        player.position.x -= speed;
+    }
+
+    if (keys["d"]) {
+        player.position.x += speed;
+    }
+}
+
+/* =========================
+   CAMERA
+========================= */
+
+function updateCamera() {
+
+    camera.position.x = player.position.x;
+
+    camera.position.y = player.position.y + 6;
+
+    camera.position.z = player.position.z + 10;
+
+    camera.lookAt(
+        player.position.x,
+        player.position.y + 1.5,
+        player.position.z
+    );
+}
+
+/* =========================
+   GAME LOOP
+========================= */
 
 function animate() {
 
     requestAnimationFrame(animate);
 
-    cube.rotation.y += 0.01;
-    cube.rotation.x += 0.005;
+    updatePlayer();
 
-    renderer.render(scene, camera);
+    updateCamera();
+
+    renderer.render(
+        scene,
+        camera
+    );
 }
 
-animate();
+/* =========================
+   STATUS
+========================= */
+
+if (status) {
+    status.innerText = "V3.0 — GAME READY";
+}
+
+/* =========================
+   RESIZE
+========================= */
 
 window.addEventListener("resize", () => {
 
     camera.aspect =
-        window.innerWidth / window.innerHeight;
+        window.innerWidth /
+        window.innerHeight;
 
     camera.updateProjectionMatrix();
 
@@ -72,3 +150,5 @@ window.addEventListener("resize", () => {
         window.innerHeight
     );
 });
+
+animate();
