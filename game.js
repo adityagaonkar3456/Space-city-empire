@@ -95,37 +95,41 @@ function updatePlayer() {
 
     const speed = 0.08;
 
-    let moving = false;
+    let dx = 0;
+    let dz = 0;
 
     if (keys.up) {
-        player.position.z -= speed;
-        moving = true;
+        dz = -1;
     }
 
     if (keys.down) {
-        player.position.z += speed;
-        moving = true;
+        dz = 1;
     }
 
     if (keys.left) {
-        player.position.x -= speed;
-        moving = true;
+        dx = -1;
     }
 
     if (keys.right) {
-        player.position.x += speed;
-        moving = true;
+        dx = 1;
     }
 
-    // WALK ANIMATION
+    const moving = dx !== 0 || dz !== 0;
+
     if (moving) {
 
+        // Move
+        player.position.x += dx * speed;
+        player.position.z += dz * speed;
+
+        // Turn player toward walking direction
+        player.rotation.y = Math.atan2(dx, dz);
+
+        // Walking animation
         walkTime += 0.15;
 
         const swing = Math.sin(walkTime) * 0.5;
 
-        // First two children are body/head.
-        // Legs are children 3 and 4.
         if (player.children[3]) {
             player.children[3].rotation.x = swing;
         }
@@ -135,10 +139,9 @@ function updatePlayer() {
         }
 
         status.innerText = "WALKING";
-    } 
+    }
     else {
 
-        // Stop legs
         if (player.children[3]) {
             player.children[3].rotation.x = 0;
         }
@@ -150,6 +153,8 @@ function updatePlayer() {
         status.innerText = "STANDING";
     }
 }
+
+    
 
 // ==========================
 // FIXED CAMERA
