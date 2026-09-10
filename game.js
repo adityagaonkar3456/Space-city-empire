@@ -5,11 +5,14 @@ const status = document.getElementById("gameStatus");
 
 const game = createGame1(canvas);
 
-const THREE = game.THREE;
 const scene = game.scene;
 const camera = game.camera;
 const renderer = game.renderer;
 const player = game.player;
+
+// =====================
+// CONTROLS
+// =====================
 
 const keys = {
     up: false,
@@ -18,76 +21,73 @@ const keys = {
     right: false
 };
 
-// ===============================
-// MOBILE BUTTONS
-// ===============================
+function button(id, key) {
 
-function connectButton(id, key) {
-    const button = document.getElementById(id);
+    const el = document.getElementById(id);
 
-    if (!button) return;
+    if (!el) return;
 
-    button.addEventListener("pointerdown", (e) => {
+    el.addEventListener("pointerdown", function(e) {
         e.preventDefault();
         keys[key] = true;
     });
 
-    button.addEventListener("pointerup", (e) => {
+    el.addEventListener("pointerup", function(e) {
         e.preventDefault();
         keys[key] = false;
     });
 
-    button.addEventListener("pointerleave", () => {
+    el.addEventListener("pointercancel", function() {
         keys[key] = false;
     });
 
-    button.addEventListener("pointercancel", () => {
+    el.addEventListener("pointerleave", function() {
         keys[key] = false;
     });
 }
 
-connectButton("moveUp", "up");
-connectButton("moveDown", "down");
-connectButton("moveLeft", "left");
-connectButton("moveRight", "right");
+button("moveUp", "up");
+button("moveDown", "down");
+button("moveLeft", "left");
+button("moveRight", "right");
 
-// ===============================
+// =====================
 // KEYBOARD
-// ===============================
+// =====================
 
-window.addEventListener("keydown", (e) => {
+window.addEventListener("keydown", function(e) {
 
-    if (e.key === "w" || e.key === "ArrowUp")
+    if (e.key === "ArrowUp" || e.key === "w")
         keys.up = true;
 
-    if (e.key === "s" || e.key === "ArrowDown")
+    if (e.key === "ArrowDown" || e.key === "s")
         keys.down = true;
 
-    if (e.key === "a" || e.key === "ArrowLeft")
+    if (e.key === "ArrowLeft" || e.key === "a")
         keys.left = true;
 
-    if (e.key === "d" || e.key === "ArrowRight")
+    if (e.key === "ArrowRight" || e.key === "d")
         keys.right = true;
 });
 
-window.addEventListener("keyup", (e) => {
+window.addEventListener("keyup", function(e) {
 
-    if (e.key === "w" || e.key === "ArrowUp")
+    if (e.key === "ArrowUp" || e.key === "w")
         keys.up = false;
 
-    if (e.key === "s" || e.key === "ArrowDown")
+    if (e.key === "ArrowDown" || e.key === "s")
         keys.down = false;
 
-    if (e.key === "a" || e.key === "ArrowLeft")
+    if (e.key === "ArrowLeft" || e.key === "a")
         keys.left = false;
 
-    if (e.key === "d" || e.key === "ArrowRight")
+    if (e.key === "ArrowRight" || e.key === "d")
         keys.right = false;
 });
 
-// ===============================
+// =====================
 // PLAYER MOVEMENT
-// ===============================
+// =====================
 
 function updatePlayer() {
 
@@ -110,36 +110,20 @@ function updatePlayer() {
     }
 }
 
-    // Normalize diagonal movement
-    const length = Math.sqrt(x * x + z * z);
-
-    x /= length;
-    z /= length;
-
-    // MOVE PLAYER
-    player.position.x += x * speed;
-    player.position.z += z * speed;
-
-    // ROTATE PLAYER
-    player.rotation.y = Math.atan2(x, z);
-}
-
-// ===============================
+// =====================
 // CAMERA FOLLOW
-// ===============================
+// =====================
 
 function updateCamera() {
 
-    const desiredPosition = new THREE.Vector3(
-        player.position.x,
-        player.position.y + 5.5,
-        player.position.z + 9
-    );
+    camera.position.x =
+        player.position.x;
 
-    camera.position.lerp(
-        desiredPosition,
-        0.12
-    );
+    camera.position.y =
+        player.position.y + 6;
+
+    camera.position.z =
+        player.position.z + 10;
 
     camera.lookAt(
         player.position.x,
@@ -148,9 +132,9 @@ function updateCamera() {
     );
 }
 
-// ===============================
+// =====================
 // GAME LOOP
-// ===============================
+// =====================
 
 function animate() {
 
@@ -162,15 +146,15 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-status.innerText = "PLAYER MOVEMENT READY";
+status.innerText = "GAME READY";
 
 animate();
 
-// ===============================
+// =====================
 // RESIZE
-// ===============================
+// =====================
 
-window.addEventListener("resize", () => {
+window.addEventListener("resize", function() {
 
     camera.aspect =
         window.innerWidth /
