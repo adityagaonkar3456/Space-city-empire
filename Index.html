@@ -1,1 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
+  <title>Space City Empire</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family: Arial, sans-serif;
+      touch-action: none;
+    }
+
+    #game {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    #hud {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 10;
+      color: white;
+      background: rgba(0,0,0,.45);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+
+    #joystick {
+      position: fixed;
+      left: 25px;
+      bottom: 30px;
+      width: 125px;
+      height: 125px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.15);
+      border: 2px solid rgba(255,255,255,.35);
+      z-index: 20;
+    }
+
+    #stick {
+      position: absolute;
+      width: 55px;
+      height: 55px;
+      left: 33px;
+      top: 33px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.65);
+    }
+
+    .button {
+      position: fixed;
+      right: 25px;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.4);
+      background: rgba(0,0,0,.45);
+      color: white;
+      font-weight: bold;
+      z-index: 20;
+    }
+
+    #jump {
+      bottom: 115px;
+    }
+
+    #sprint {
+      bottom: 30px;
+    }
+  </style>
+</head>
+
+<body>
+
+<canvas id="game"></canvas>
+
+<div id="hud">
+  <b>SPACE CITY EMPIRE</b><br>
+  Stage 1 — City Prototype
+</div>
+
+<div id="joystick">
+  <div id="stick"></div>
+</div>
+
+<button class="button" id="jump">JUMP</button>
+<button class="button" id="sprint">RUN</button>
+
+<script type="module">
+
+import * as THREE from
+"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
+
+/* -------------------------
+   SCENE
+------------------------- */
+
+const scene = new THREE.Scene();
+
+scene.background = new THREE.Color(0x87ceeb);
+
+scene.fog = new THREE.Fog(
+  0x87ceeb,
+  40,
+  180
+);
+
+
+/* -------------------------
+   CAMERA
+------------------------- */
+
+const camera = new THREE.PerspectiveCamera(
+  60,
+  innerWidth / innerHeight,
+  0.1,
+  500
+);
+
+camera.position.set(
+  0,
+  6,
+  10
+);
+
+
+/* -------------------------
+   RENDERER
+------------------------- */
+
+const renderer = new THREE.WebGLRenderer({
+  canvas: document.getElementById("game"),
+  antialias: true
+});
+
+renderer.setPixelRatio(
+  Math.min(devicePixelRatio, 1.5)
+);
+
+renderer.setSize(
+  innerWidth,
+  innerHeight
+);
+
+renderer.shadowMap.enabled = true;
+
+
+/* -------------------------
+   LIGHTING
+------------------------- */
+
+const sunlight = new THREE.DirectionalLight(
+  0xffffff,
+  2
+);
+
+sunlight.position.set(
+  30,
+  60,
+  20
+);
+
+sunlight.castShadow = true;
+
+scene.add(sunlight);
+
+
+const ambient = new THREE.HemisphereLight(
+  0xffffff,
+  0x444444,
+  1.5
+);
+
+scene.add(ambient);
+
+
+/* -------------------------
+   GROUND
+------------------------- */
+
+const groundGeometry =
+  new THREE.PlaneGeometry(
+    300,
+    300
+  );
+
+const groundMaterial =
+  new THREE.MeshStandardMaterial({
+    color: 0x4d7c45
+  });
+
+const ground =
+  new THREE.Mesh(
+    groundGeometry,
+    groundMaterial
+  );
+
+ground.rotation.x =
+  -Math.PI / 2;
+
+ground.receiveShadow = true;
+
+scene.add(ground);
+
+
+/* -------------------------
+   ROAD
+------------------------- */
+
+function createRoad(
+  x,
+  z,
+  width,
+  depth
+) {
+
+  const geometry =
+    new THREE.BoxGeometry(
+      width,
+      0.08,
+      depth
+    );
+
+  const material =
+    new THREE.MeshStandardMaterial({
+      color: 0x303030
+    });
+
+  const road =
+    new THREE.Mesh(
+      geometry,
+      material
+    );
+
+  road.position.set(
+    x,
+    0.04,
+    z
+  );
+
+  scene.add(road);
+}
+
+createRoad(
+  0,
+  0,
+  280,
+  14
+);
+
+createRoad(
+  0,
+  40,
+  280,
+  14
+);
+
+createRoad(
+  0,
+  -40,
+  280,
+  14
+);
+
+
+/* -------------------------
+   BUILDINGS
+------------------------- */
+
+function createBuilding(
+  x,
+  z,
+  w,
+  h,
+  d
+) {
+
+  const geometry =
+    new THREE.BoxGeometry(
+      w,
+      h,
+      d
+    );
+
+  const material =
+    new THREE.MeshStandardMaterial({
+      color:
+        new THREE.Color(
+          0.25 +
+          Math.random() * 0.35,
+          0.25 +
+          Math.random() * 0.35,
+          0.25 +
+          Math.random() * 0.35
+        )
+    });
+
+  const building =
+    new THREE.Mesh(
+      geometry,
+      material
+    );
+
+  building.position.set(
+    x,
+    h / 2,
+    z
+  );
+
+  building.castShadow = true;
+  building.receiveShadow = true;
+
+  scene.add(building);
+}
+
+
+/* City blocks */
+
+for (
+  let x = -90;
+  x <= 90;
+  x += 30
+) {
+
+  for (
+    let z = -90;
+    z <= 90;
+    z += 30
+  ) {
+
+    if (
+      Math.abs(z) === 0
+    ) continue;
+
+    createBuilding(
+      x,
+      z,
+      18,
+      8 + Math.random() * 20,
+      18
+    );
+  }
+}
+
+
+/* -------------------------
+   PLAYER
+------------------------- */
+
+const player =
+  new THREE.Group();
+
+scene.add(player);
+
+
+/* Body */
+
+const body =
+  new THREE.Mesh(
+    new THREE.BoxGeometry(
+      1,
+      1.6,
+      0.6
+    ),
+    new THREE.MeshStandardMaterial({
+      color: 0x2255aa
+    })
+  );
+
+body.position.y = 1.1;
+
+body.castShadow = true;
+
+player.add(body);
+
+
+/* Head */
+
+const head =
+  new THREE.Mesh(
+    new THREE.SphereGeometry(
+      0.38,
+      16,
+      16
+    ),
+    new THREE.MeshStandardMaterial({
+      color: 0xc68642
+    })
+  );
+
+head.position.y = 2.2;
+
+head.castShadow = true;
+
+player.add(head);
+
+
+/* -------------------------
+   PLAYER MOVEMENT
+------------------------- */
+
+let joystickX = 0;
+let joystickY = 0;
+
+let sprinting = false;
+
+const speed = 0.09;
+const sprintSpeed = 0.17;
+
+
+/* -------------------------
+   JOYSTICK
+------------------------- */
+
+const joystick =
+  document.getElementById(
+    "joystick"
+  );
+
+const stick =
+  document.getElementById(
+    "stick"
+  );
+
+let joystickActive = false;
+
+function updateJoystick(
+  clientX,
+  clientY
+) {
+
+  const rect =
+    joystick.getBoundingClientRect();
+
+  const centerX =
+    rect.left +
+    rect.width / 2;
+
+  const centerY =
+    rect.top +
+    rect.height / 2;
+
+  let dx =
+    clientX - centerX;
+
+  let dy =
+    clientY - centerY;
+
+  const max =
+    42;
+
+  const distance =
+    Math.sqrt(
+      dx * dx +
+      dy * dy
+    );
+
+  if (distance > max) {
+
+    dx =
+      dx / distance * max;
+
+    dy =
+      dy / distance * max;
+  }
+
+  stick.style.transform =
+    `translate(${dx}px, ${dy}px)`;
+
+  joystickX =
+    dx / max;
+
+  joystickY =
+    dy / max;
+}
+
+
+joystick.addEventListener(
+  "pointerdown",
+  e => {
+
+    joystickActive = true;
+
+    joystick.setPointerCapture(
+      e.pointerId
+    );
+
+    updateJoystick(
+      e.clientX,
+      e.clientY
+    );
+  }
+);
+
+
+joystick.addEventListener(
+  "pointermove",
+  e => {
+
+    if (!joystickActive) return;
+
+    updateJoystick(
+      e.clientX,
+      e.clientY
+    );
+  }
+);
+
+
+joystick.addEventListener(
+  "pointerup",
+  resetJoystick
+);
+
+joystick.addEventListener(
+  "pointercancel",
+  resetJoystick
+);
+
+
+function resetJoystick() {
+
+  joystickActive = false;
+
+  joystickX = 0;
+  joystickY = 0;
+
+  stick.style.transform =
+    "translate(0px, 0px)";
+}
+
+
+/* -------------------------
+   SPRINT
+------------------------- */
+
+const sprint =
+  document.getElementById(
+    "sprint"
+  );
+
+sprint.addEventListener(
+  "pointerdown",
+  () => {
+    sprinting = true;
+  }
+);
+
+sprint.addEventListener(
+  "pointerup",
+  () => {
+    sprinting = false;
+  }
+);
+
+
+/* -------------------------
+   CAMERA
+------------------------- */
+
+let cameraAngle = 0;
+
+let cameraDistance = 8;
+
+let cameraHeight = 5;
+
+let cameraTouch = false;
+
+let lastTouchX = 0;
+
+
+/* Right side camera rotation */
+
+document.addEventListener(
+  "pointerdown",
+  e => {
+
+    if (
+      e.clientX >
+      innerWidth * 0.45
+    ) {
+
+      cameraTouch = true;
+
+      lastTouchX =
+        e.clientX;
+    }
+  }
+);
+
+
+document.addEventListener(
+  "pointermove",
+  e => {
+
+    if (!cameraTouch) return;
+
+    const dx =
+      e.clientX -
+      lastTouchX;
+
+    cameraAngle -=
+      dx * 0.006;
+
+    lastTouchX =
+      e.clientX;
+  }
+);
+
+
+document.addEventListener(
+  "pointerup",
+  () => {
+
+    cameraTouch = false;
+  }
+);
+
+
+/* -------------------------
+   ANIMATION
+------------------------- */
+
+const clock =
+  new THREE.Clock();
+
+
+function animate() {
+
+  requestAnimationFrame(
+    animate
+  );
+
+  const delta =
+    clock.getDelta();
+
+
+  /* Movement */
+
+  const currentSpeed =
+    sprinting
+      ? sprintSpeed
+      : speed;
+
+
+  if (
+    Math.abs(joystickX) > 0.05 ||
+    Math.abs(joystickY) > 0.05
+  ) {
+
+    const forward =
+      new THREE.Vector3(
+        Math.sin(cameraAngle),
+        0,
+        Math.cos(cameraAngle)
+      );
+
+    const right =
+      new THREE.Vector3(
+        Math.cos(cameraAngle),
+        0,
+        -Math.sin(cameraAngle)
+      );
+
+
+    const movement =
+      new THREE.Vector3();
+
+
+    movement.addScaledVector(
+      right,
+      joystickX
+    );
+
+    movement.addScaledVector(
+      forward,
+      joystickY
+    );
+
+
+    if (movement.length() > 0) {
+
+      movement.normalize();
+
+      player.position.addScaledVector(
+        movement,
+        currentSpeed * 60 * delta
+      );
+
+
+      player.rotation.y =
+        Math.atan2(
+          movement.x,
+          movement.z
+        );
+    }
+  }
+
+
+  /* Camera */
+
+  const target =
+    player.position.clone();
+
+  target.y += 2;
+
+
+  const cameraX =
+    target.x -
+    Math.sin(cameraAngle) *
+    cameraDistance;
+
+  const cameraZ =
+    target.z -
+    Math.cos(cameraAngle) *
+    cameraDistance;
+
+
+  camera.position.lerp(
+    new THREE.Vector3(
+      cameraX,
+      target.y + cameraHeight,
+      cameraZ
+    ),
+    0.12
+  );
+
+
+  camera.lookAt(
+    target
+  );
+
+
+  renderer.render(
+    scene,
+    camera
+  );
+}
+
+
+animate();
+
+
+/* -------------------------
+   RESIZE
+------------------------- */
+
+window.addEventListener(
+  "resize",
+  () => {
+
+    camera.aspect =
+      innerWidth /
+      innerHeight;
+
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(
+      innerWidth,
+      innerHeight
+    );
+  }
+);
+
+</script>
+
+</body>
+</html>
