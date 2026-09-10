@@ -93,29 +93,22 @@ function updatePlayer() {
 
     const speed = 0.18;
 
-    let x = 0;
-    let z = 0;
-
     if (keys.up) {
-        z -= 1;
+        player.position.z -= speed;
     }
 
     if (keys.down) {
-        z += 1;
+        player.position.z += speed;
     }
 
     if (keys.left) {
-        x -= 1;
+        player.position.x -= speed;
     }
 
     if (keys.right) {
-        x += 1;
+        player.position.x += speed;
     }
-
-    // No movement
-    if (x === 0 && z === 0) {
-        return;
-    }
+}
 
     // Normalize diagonal movement
     const length = Math.sqrt(x * x + z * z);
