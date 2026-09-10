@@ -10,129 +10,61 @@ const camera = game.camera;
 const renderer = game.renderer;
 const player = game.player;
 
-let moving = false;
+// UP BUTTON
+const up = document.getElementById("moveUp");
 
-// =========================
-// MOBILE CONTROLS
-// =========================
-
-function setupButton(id, action) {
-
-    const btn = document.getElementById(id);
-
-    if (!btn) return;
-
-    btn.addEventListener("pointerdown", function(e) {
-        e.preventDefault();
-        moving = true;
-        action(true);
-    });
-
-    btn.addEventListener("pointerup", function(e) {
-        e.preventDefault();
-        moving = false;
-        action(false);
-    });
-
-    btn.addEventListener("pointercancel", function() {
-        moving = false;
-        action(false);
-    });
-
-    btn.addEventListener("pointerleave", function() {
-        moving = false;
-        action(false);
-    });
-}
-
-setupButton("moveUp", (v) => {
-    window.moveUp = v;
+up.addEventListener("pointerdown", () => {
+    player.position.z -= 2;
+    status.innerText = "UP WORKING";
 });
 
-setupButton("moveDown", (v) => {
-    window.moveDown = v;
+// DOWN BUTTON
+const down = document.getElementById("moveDown");
+
+down.addEventListener("pointerdown", () => {
+    player.position.z += 2;
+    status.innerText = "DOWN WORKING";
 });
 
-setupButton("moveLeft", (v) => {
-    window.moveLeft = v;
+// LEFT BUTTON
+const left = document.getElementById("moveLeft");
+
+left.addEventListener("pointerdown", () => {
+    player.position.x -= 2;
+    status.innerText = "LEFT WORKING";
 });
 
-setupButton("moveRight", (v) => {
-    window.moveRight = v;
+// RIGHT BUTTON
+const right = document.getElementById("moveRight");
+
+right.addEventListener("pointerdown", () => {
+    player.position.x += 2;
+    status.innerText = "RIGHT WORKING";
 });
 
-window.moveUp = false;
-window.moveDown = false;
-window.moveLeft = false;
-window.moveRight = false;
+// CAMERA - FIXED
+camera.position.set(0, 6, 30);
 
-// =========================
-// PLAYER MOVEMENT
-// =========================
+camera.lookAt(
+    player.position.x,
+    player.position.y + 1.5,
+    player.position.z
+);
 
-function updatePlayer() {
-
-    const speed = 0.25;
-
-    if (window.moveUp) {
-        player.position.z -= speed;
-    }
-
-    if (window.moveDown) {
-        player.position.z += speed;
-    }
-
-    if (window.moveLeft) {
-        player.position.x -= speed;
-    }
-
-    if (window.moveRight) {
-        player.position.x += speed;
-    }
-}
-
-// =========================
-// CAMERA
-// =========================
-
-function updateCamera() {
-
-    camera.position.set(
-        player.position.x,
-        player.position.y + 6,
-        player.position.z + 10
-    );
-
-    camera.lookAt(
-        player.position.x,
-        player.position.y + 1.5,
-        player.position.z
-    );
-}
-
-// =========================
 // GAME LOOP
-// =========================
-
 function animate() {
 
     requestAnimationFrame(animate);
 
-    updatePlayer();
-    updateCamera();
-
     renderer.render(scene, camera);
 }
 
-status.innerText = "PLAYER READY";
+status.innerText = "MOVEMENT TEST READY";
 
 animate();
 
-// =========================
 // RESIZE
-// =========================
-
-window.addEventListener("resize", function() {
+window.addEventListener("resize", () => {
 
     camera.aspect =
         window.innerWidth /
