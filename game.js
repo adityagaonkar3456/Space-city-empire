@@ -118,14 +118,14 @@ function updatePlayer() {
 
     if (moving) {
 
-        // Move
+        // MOVE
         player.position.x += dx * speed;
         player.position.z += dz * speed;
 
-        // Turn player toward walking direction
-        player.rotation.y = Math.atan2(dx, dz);
+        // FACE WALKING DIRECTION
+        player.rotation.y = Math.atan2(-dx, -dz);
 
-        // Walking animation
+        // WALK ANIMATION
         walkTime += 0.15;
 
         const swing = Math.sin(walkTime) * 0.5;
@@ -139,9 +139,10 @@ function updatePlayer() {
         }
 
         status.innerText = "WALKING";
-    }
-    else {
 
+    } else {
+
+        // STOP WALKING
         if (player.children[3]) {
             player.children[3].rotation.x = 0;
         }
