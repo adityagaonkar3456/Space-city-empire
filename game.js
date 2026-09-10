@@ -10,78 +10,156 @@ const camera = game.camera;
 const renderer = game.renderer;
 const player = game.player;
 
-let moving = false;
+const keys = {
+    up: false,
+    down: false,
+    left: false,
+    right: false
+};
 
 /* =========================
-   UP BUTTON
+   MOBILE BUTTONS
 ========================= */
 
-const up = document.getElementById("moveUp");
+function connectButton(id, key) {
 
-up.addEventListener("pointerdown", (e) => {
+    const button = document.getElementById(id);
 
-    e.preventDefault();
+    if (!button) return;
 
-    moving = true;
+    button.addEventListener("pointerdown", (e) => {
+        e.preventDefault();
+        keys[key] = true;
+    });
 
-    status.innerText = "MOVING...";
+    button.addEventListener("pointerup", (e) => {
+        e.preventDefault();
+        keys[key] = false;
+    });
+
+    button.addEventListener("pointercancel", () => {
+        keys[key] = false;
+    });
+}
+
+connectButton("moveUp", "up");
+connectButton("moveDown", "down");
+connectButton("moveLeft", "left");
+connectButton("moveRight", "right");
+
+/* =========================
+   KEYBOARD
+========================= */
+
+window.addEventListener("keydown", (e) => {
+
+    if (e.key === "w" || e.key === "ArrowUp")
+        keys.up = true;
+
+    if (e.key === "s" || e.key === "ArrowDown")
+        keys.down = true;
+
+    if (e.key === "a" || e.key === "ArrowLeft")
+        keys.left = true;
+
+    if (e.key === "d" || e.key === "ArrowRight")
+        keys.right = true;
 });
 
-up.addEventListener("pointerup", () => {
+window.addEventListener("keyup", (e) => {
 
-    moving = false;
+    if (e.key === "w" || e.key === "ArrowUp")
+        keys.up = false;
 
-    status.innerText = "STOPPED";
-});
+    if (e.key === "s" || e.key === "ArrowDown")
+        keys.down = false;
 
-up.addEventListener("pointercancel", () => {
-    moving = false;
+    if (e.key === "a" || e.key === "ArrowLeft")
+        keys.left = false;
+
+    if (e.key === "d" || e.key === "ArrowRight")
+        keys.right = false;
 });
 
 /* =========================
-   MOVEMENT
+   PLAYER
 ========================= */
 
-function update() {
+function updatePlayer() {
 
-    if (moving) {
+    const speed = 0.15;
 
-        player.position.z -= 0.15;
-    }
+    if (keys.up)
+        player.position.z -= speed;
+
+    if (keys.down)
+        player.position.z += speed;
+
+    if (keys.left)
+        player.position.x -= speed;
+
+    if (keys.right)
+        player.position.x += speed;
 }
 
 /* =========================
-   CAMERA
+   CAMERA FOLLOW
 ========================= */
 
-camera.position.set(
-    0,
-    6,
-    10
-);
+function updateCamera() {
 
-camera.lookAt(
-    0,
-    2,
-    0
-);
+    const targetX = player.position.x;
+    const targetY = player.position.y + 6;
+    const targetZ = player.position.z + 10;
+
+    camera.position.x +=
+        (targetX - camera.position.x) * 0.12;
+
+    camera.position.y +=
+        (targetY - camera.position.y) * 0.12;
+
+    camera.position.z +=
+        (targetZ - camera.position.z) * 0.12;
+
+    camera.lookAt(
+        player.position.x,
+        player.position.y + 1.5,
+        player.position.z
+    );
+}
 
 /* =========================
-   LOOP
+   GAME LOOP
 ========================= */
 
 function animate() {
 
     requestAnimationFrame(animate);
 
-    update();
+    updatePlayer();
+    updateCamera();
 
-    renderer.render(
-        scene,
-        camera
-    );
+    renderer.render(scene, camera);
 }
 
-status.innerText = "UP TEST READY";
+status.innerText = "PLAYER READY";
 
 animate();
+
+/* =========================
+   RESIZE
+========================= */
+
+window.addEventListener("resize", () => {
+
+    camera.aspect =
+        window.innerWidth /
+        window.innerHeight;
+
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(
+        window.innerWidth,
+        window.innerHeight
+    );
+});
