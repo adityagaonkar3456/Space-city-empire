@@ -284,7 +284,38 @@ if (jumping) {
     }
 }
 }
+// 360° CAMERA ROTATION
+let cameraAngle = 0;
+let cameraDistance = 10;
+let cameraHeight = 6;
 
+let touchStartX = 0;
+let rotatingCamera = false;
+
+window.addEventListener("pointerdown", (e) => {
+
+    if (e.clientX > window.innerWidth * 0.35) {
+        touchStartX = e.clientX;
+        rotatingCamera = true;
+    }
+
+});
+
+window.addEventListener("pointermove", (e) => {
+
+    if (!rotatingCamera) return;
+
+    const deltaX = e.clientX - touchStartX;
+
+    cameraAngle -= deltaX * 0.008;
+
+    touchStartX = e.clientX;
+
+});
+
+window.addEventListener("pointerup", () => {
+    rotatingCamera = false;
+});
 // ==========================
 // THIRD PERSON CAMERA
 // ==========================
