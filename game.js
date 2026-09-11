@@ -1,7 +1,9 @@
 import { createGame1 } from "./game1.js";
 
 const canvas = document.getElementById("gameCanvas");
-const status = document.getElementById("gameStatus");
+const status = {
+    set innerText(value) {}
+};
 
 const game = createGame1(canvas);
 
