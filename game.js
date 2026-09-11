@@ -287,6 +287,7 @@ if (jumping) {
 // 360° CAMERA ROTATION
 let cameraAngle = 0;
 let cameraDistance = 10;
+let targetCameraDistance = 10;
 let cameraHeight = 6;
 
 let touchStartX = 0;
