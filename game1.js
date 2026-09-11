@@ -74,24 +74,7 @@ export function createGame1(canvas) {
     // =========================
 
     const player = new THREE.Group();
-    loader.load(
-    "models/human/casual_male-architectural_updated.glb",
-    (gltf) => {
-
-        const human = gltf.scene;
-
-        human.scale.set(1, 1, 1);
-        human.position.set(0, 0, 0);
-
-        player.add(human);
-
-        console.log("Human GLB loaded");
-    },
-    undefined,
-    (error) => {
-        console.error("Human GLB failed:", error);
-    }
-);
+    
     // PLAYER BODY
     const body = new THREE.Mesh(
         new THREE.BoxGeometry(1.5, 2.2, 1),
