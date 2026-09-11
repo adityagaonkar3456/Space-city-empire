@@ -263,5 +263,87 @@ extraStreetLight(-35, 8);
 
 extraStreetLight(35, -8);
 extraStreetLight(35, 8);
+    
+    // CITY V1.2 - PARKED CAR
+
+function createCar(x, z, rotation = 0) {
+
+    const car = new THREE.Group();
+
+    const bodyMaterial = new THREE.MeshStandardMaterial({
+        color: 0x182b4a,
+        metalness: 0.6,
+        roughness: 0.35
+    });
+
+    const glassMaterial = new THREE.MeshStandardMaterial({
+        color: 0x07151f,
+        metalness: 0.5,
+        roughness: 0.2
+    });
+
+    // Car body
+    const body = new THREE.Mesh(
+        new THREE.BoxGeometry(2.4, 0.55, 4.5),
+        bodyMaterial
+    );
+
+    body.position.y = 0.55;
+    body.castShadow = true;
+    car.add(body);
+
+    // Upper cabin
+    const cabin = new THREE.Mesh(
+        new THREE.BoxGeometry(1.8, 0.65, 2.1),
+        glassMaterial
+    );
+
+    cabin.position.set(0, 1.05, -0.15);
+    cabin.castShadow = true;
+    car.add(cabin);
+
+    // Wheels
+    const wheelMaterial = new THREE.MeshStandardMaterial({
+        color: 0x111111,
+        roughness: 0.8
+    });
+
+    const wheelPositions = [
+        [-1.15, 0.38, -1.45],
+        [ 1.15, 0.38, -1.45],
+        [-1.15, 0.38,  1.45],
+        [ 1.15, 0.38,  1.45]
+    ];
+
+    for (const p of wheelPositions) {
+
+        const wheel = new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                0.38,
+                0.38,
+                0.22,
+                16
+            ),
+            wheelMaterial
+        );
+
+        wheel.rotation.z = Math.PI / 2;
+        wheel.position.set(p[0], p[1], p[2]);
+        wheel.castShadow = true;
+
+        car.add(wheel);
+    }
+
+    car.position.set(x, 0, z);
+    car.rotation.y = rotation;
+
+    scene.add(car);
+
+    return car;
+}
+
+// Parked vehicles
+createCar(-5, -12, 0);
+createCar(5, 12, Math.PI);
     return true;
 }
