@@ -365,7 +365,16 @@ function animate() {
 
     if (gameStarted) {
     updatePlayer();
-    updateCamera();
+
+if (game.updatePlayerAnimation) {
+    game.updatePlayerAnimation(
+        0.016,
+        keys.up || keys.down || keys.left || keys.right,
+        keys.run
+    );
+}
+
+updateCamera();;
 }
     renderer.render(scene, camera);
 }
