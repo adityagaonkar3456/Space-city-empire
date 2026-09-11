@@ -29,6 +29,9 @@ export function createGame1(canvas) {
         antialias: false,
         powerPreference: "high-performance"
     });
+    renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     renderer.setSize(
         window.innerWidth,
