@@ -1,5 +1,5 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
-
+import { createCity } from "./game2.js";
 export function createGame1(canvas) {
 
     const scene = new THREE.Scene();
