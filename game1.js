@@ -70,7 +70,7 @@ sun.shadow.mapSize.width = 1024;
 
     ground.rotation.x = -Math.PI / 2;
     ground.position.y = 0;
-
+    ground.receiveShadow = true;
     scene.add(ground);
 
     // =========================
