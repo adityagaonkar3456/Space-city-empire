@@ -253,3 +253,60 @@ button:active {
         bottom: 40px;
     }
 }
+/* =========================
+   GAME MENU
+========================= */
+
+#menuButton {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 50;
+
+    padding: 12px 18px;
+
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 12px;
+
+    background: rgba(5,10,20,0.75);
+    color: white;
+
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 1px;
+
+    backdrop-filter: blur(10px);
+}
+
+#gameMenu {
+    position: fixed;
+    top: 65px;
+    right: 18px;
+    z-index: 50;
+
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+
+    width: 180px;
+    padding: 15px;
+
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 16px;
+
+    background: rgba(5,10,20,0.9);
+
+    backdrop-filter: blur(15px);
+}
+
+#gameMenu button {
+    padding: 13px;
+
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 10px;
+
+    background: rgba(255,255,255,0.08);
+    color: white;
+
+    font-weight: bold;
+}
