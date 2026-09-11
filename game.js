@@ -43,6 +43,30 @@ if (saveButton) {
         status.innerText = "GAME SAVED";
     });
 }
+const loadButton = document.getElementById("loadButton");
+
+if (loadButton) {
+    loadButton.addEventListener("click", () => {
+
+        const saved = localStorage.getItem("sciFiGameSave");
+
+        if (!saved) {
+            alert("No saved game found.");
+            return;
+        }
+
+        const saveData = JSON.parse(saved);
+
+        player.position.x = saveData.x;
+        player.position.y = saveData.y;
+        player.position.z = saveData.z;
+
+        startScreen.style.display = "none";
+        gameStarted = true;
+
+        status.innerText = "GAME LOADED";
+    });
+}
 // ==========================
 // CONTROLS
 // ==========================
