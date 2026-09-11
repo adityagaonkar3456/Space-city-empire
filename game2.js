@@ -220,6 +220,48 @@ export function createCity(scene) {
     streetLight(10, -10);
     streetLight(-10, 10);
     streetLight(10, 10);
+   // CITY V1.1 - EXTRA STREET LIGHTS
 
+function extraStreetLight(x, z) {
+    const poleMaterial = new THREE.MeshStandardMaterial({
+        color: 0x20252c,
+        metalness: 0.7,
+        roughness: 0.4
+    });
+
+    const pole = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.08, 0.12, 5, 8),
+        poleMaterial
+    );
+
+    pole.position.set(x, 2.5, z);
+    pole.castShadow = true;
+    scene.add(pole);
+
+    const lampMaterial = new THREE.MeshBasicMaterial({
+        color: 0x9eeaff
+    });
+
+    const lamp = new THREE.Mesh(
+        new THREE.SphereGeometry(0.22, 12, 8),
+        lampMaterial
+    );
+
+    lamp.position.set(x, 5, z);
+    scene.add(lamp);
+}
+
+// Long road lights
+extraStreetLight(-8, -35);
+extraStreetLight(8, -35);
+
+extraStreetLight(-8, 35);
+extraStreetLight(8, 35);
+
+extraStreetLight(-35, -8);
+extraStreetLight(-35, 8);
+
+extraStreetLight(35, -8);
+extraStreetLight(35, 8);
     return true;
 }
