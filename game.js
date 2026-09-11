@@ -43,6 +43,21 @@ if (saveButton) {
         status.innerText = "GAME SAVED";
     });
 }
+const menuButton = document.getElementById("menuButton");
+const gameMenu = document.getElementById("gameMenu");
+const closeMenuButton = document.getElementById("closeMenuButton");
+
+if (menuButton) {
+    menuButton.addEventListener("click", () => {
+        gameMenu.style.display = "flex";
+    });
+}
+
+if (closeMenuButton) {
+    closeMenuButton.addEventListener("click", () => {
+        gameMenu.style.display = "none";
+    });
+}
 const loadButton = document.getElementById("loadButton");
 
 if (loadButton) {
