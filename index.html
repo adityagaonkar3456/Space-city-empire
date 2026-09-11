@@ -11,49 +11,92 @@
                  user-scalable=no"
     >
 
-    <title>Sci-Fi Story Game</title>
+    <title>Sci-Fi Story</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <!-- Game Canvas -->
+    <!-- =========================
+         PREMIUM START SCREEN
+    ========================== -->
+
+    <div id="startScreen">
+
+        <div class="logo">
+            SCI-FI
+        </div>
+
+        <div class="subtitle">
+            STORY
+        </div>
+
+        <p class="description">
+            A new journey beyond Earth begins.
+        </p>
+
+        <button id="startButton">
+            ▶ START GAME
+        </button>
+
+        <button id="loadButton">
+            ↻ LOAD GAME
+        </button>
+
+        <div class="version">
+            VERSION 1.0
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         GAME
+    ========================== -->
+
     <canvas id="gameCanvas"></canvas>
 
-    <!-- Game HUD -->
+
+    <!-- =========================
+         HUD
+    ========================== -->
+
     <div id="hud">
+
         <div id="gameTitle">
             SCI-FI STORY
         </div>
 
         <div id="gameStatus">
-            Loading...
+            READY
         </div>
+
+        <button id="saveButton">
+            💾 SAVE
+        </button>
+
     </div>
 
-    <!-- Mobile Controls -->
+
+    <!-- =========================
+         MOBILE CONTROLS
+    ========================== -->
+
     <div id="mobileControls">
 
         <div id="movementControls">
 
-            <button id="moveUp" class="controlButton">
-                ▲
-            </button>
+            <button id="moveUp" class="controlButton">▲</button>
 
-            <button id="moveLeft" class="controlButton">
-                ◀
-            </button>
+            <button id="moveLeft" class="controlButton">◀</button>
 
-            <button id="moveDown" class="controlButton">
-                ▼
-            </button>
+            <button id="moveDown" class="controlButton">▼</button>
 
-            <button id="moveRight" class="controlButton">
-                ▶
-            </button>
+            <button id="moveRight" class="controlButton">▶</button>
 
         </div>
+
 
         <div id="actionControls">
 
@@ -69,7 +112,7 @@
 
     </div>
 
-    <!-- Game Script -->
+
     <script type="module" src="game.js"></script>
 
 </body>
