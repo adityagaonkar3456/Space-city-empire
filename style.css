@@ -1,12 +1,8 @@
-/* =========================================
-   SCI-FI STORY GAME
-   STYLE SHEET
-========================================= */
-
 * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 html,
@@ -14,103 +10,159 @@ body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: #000;
-    font-family: Arial, Helvetica, sans-serif;
-    touch-action: none;
+    font-family: Arial, sans-serif;
+    background: #05070d;
+    color: white;
 }
-
-/* =========================================
-   GAME CANVAS
-========================================= */
 
 #gameCanvas {
     position: fixed;
     inset: 0;
-
-    width: 100vw;
-    height: 100vh;
-
+    width: 100%;
+    height: 100%;
     display: block;
-
-    outline: none;
 }
 
-/* =========================================
+/* =========================
+   START SCREEN
+========================= */
+
+#startScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(30, 80, 130, 0.35),
+            rgba(3, 6, 15, 0.96) 65%
+        );
+}
+
+.logo {
+    font-size: clamp(48px, 15vw, 110px);
+    font-weight: 900;
+    letter-spacing: 12px;
+    text-shadow:
+        0 0 10px rgba(100, 200, 255, 0.8),
+        0 0 30px rgba(50, 150, 255, 0.5);
+}
+
+.subtitle {
+    margin-top: -5px;
+    font-size: clamp(20px, 6vw, 40px);
+    letter-spacing: 14px;
+    opacity: 0.75;
+}
+
+.description {
+    margin-top: 25px;
+    max-width: 320px;
+    font-size: 14px;
+    line-height: 1.6;
+    opacity: 0.65;
+}
+
+#startButton,
+#loadButton {
+    width: min(300px, 78vw);
+    padding: 16px;
+    margin-top: 30px;
+
+    border: 1px solid rgba(120, 210, 255, 0.7);
+    border-radius: 12px;
+
+    background: rgba(20, 90, 140, 0.25);
+    color: white;
+
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 2px;
+
+    backdrop-filter: blur(10px);
+}
+
+#loadButton {
+    margin-top: 12px;
+    opacity: 0.75;
+}
+
+#startButton:active,
+#loadButton:active {
+    transform: scale(0.96);
+}
+
+.version {
+    position: absolute;
+    bottom: 20px;
+    font-size: 10px;
+    letter-spacing: 3px;
+    opacity: 0.4;
+}
+
+/* =========================
    HUD
-========================================= */
+========================= */
 
 #hud {
     position: fixed;
-
     top: 15px;
     left: 15px;
-
-    z-index: 10;
-
-    padding: 12px 16px;
-
-    color: white;
-
-    background: rgba(0, 0, 0, 0.55);
-
-    border: 1px solid rgba(255, 255, 255, 0.2);
-
-    border-radius: 10px;
-
-    backdrop-filter: blur(6px);
+    z-index: 20;
 
     pointer-events: none;
 }
 
 #gameTitle {
-    font-size: 18px;
+    font-size: 14px;
     font-weight: bold;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
 }
 
 #gameStatus {
-    margin-top: 6px;
-
-    font-size: 13px;
-
-    opacity: 0.85;
+    margin-top: 5px;
+    font-size: 11px;
+    opacity: 0.75;
 }
 
-/* =========================================
+#saveButton {
+    margin-top: 10px;
+    padding: 8px 14px;
+
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+
+    background: rgba(0,0,0,0.35);
+    color: white;
+
+    font-size: 11px;
+    pointer-events: auto;
+}
+
+/* =========================
    MOBILE CONTROLS
-========================================= */
+========================= */
 
 #mobileControls {
     position: fixed;
-
-    left: 0;
-    right: 0;
-    bottom: 20px;
-
-    z-index: 20;
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: flex-end;
-
-    padding: 0 20px;
-
+    inset: 0;
+    z-index: 30;
     pointer-events: none;
 }
 
-/* =========================================
-   MOVEMENT BUTTONS
-========================================= */
-
 #movementControls {
-    position: relative;
+    position: absolute;
+    left: 25px;
+    bottom: 30px;
 
     width: 150px;
     height: 150px;
-
-    pointer-events: auto;
 }
 
 .controlButton {
@@ -120,28 +172,15 @@ body {
     height: 48px;
 
     border: 1px solid rgba(255,255,255,0.25);
-
     border-radius: 12px;
 
-    background: rgba(0,0,0,0.6);
-
+    background: rgba(10,20,35,0.65);
     color: white;
 
-    font-size: 20px;
+    font-size: 18px;
 
-    font-weight: bold;
-
-    -webkit-tap-highlight-color: transparent;
-
-    user-select: none;
-
+    pointer-events: auto;
     touch-action: none;
-}
-
-.controlButton:active {
-    background: rgba(255,255,255,0.25);
-
-    transform: scale(0.94);
 }
 
 #moveUp {
@@ -156,123 +195,61 @@ body {
 
 #moveDown {
     left: 51px;
-    bottom: 0;
-}
-
-#moveRight {
-    right: 0;
     top: 51px;
 }
 
-/* =========================================
-   ACTION BUTTONS
-========================================= */
+#moveRight {
+    left: 102px;
+    top: 51px;
+}
 
 #actionControls {
+    position: absolute;
+    right: 25px;
+    bottom: 35px;
+
     display: flex;
-
     gap: 12px;
-
-    align-items: flex-end;
-
-    pointer-events: auto;
 }
 
 .actionButton {
     width: 70px;
-    height: 70px;
+    height: 55px;
 
     border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 14px;
 
-    border-radius: 50%;
-
-    background: rgba(0,0,0,0.65);
-
+    background: rgba(10,20,35,0.65);
     color: white;
 
-    font-size: 12px;
-
+    font-size: 11px;
     font-weight: bold;
 
-    -webkit-tap-highlight-color: transparent;
-
-    user-select: none;
-
+    pointer-events: auto;
     touch-action: none;
 }
 
-.actionButton:active {
-    background: rgba(255,255,255,0.25);
+button {
+    cursor: pointer;
+}
 
+button:active {
     transform: scale(0.94);
 }
 
-/* =========================================
+/* =========================
    DESKTOP
-========================================= */
+========================= */
 
-@media (min-width: 900px) {
-
-    #mobileControls {
-        display: none;
-    }
-
-}
-
-/* =========================================
-   SMALL MOBILE SCREEN
-========================================= */
-
-@media (max-width: 420px) {
-
-    #hud {
-        top: 10px;
-        left: 10px;
-
-        padding: 9px 12px;
-    }
-
-    #gameTitle {
-        font-size: 15px;
-    }
-
-    #gameStatus {
-        font-size: 11px;
-    }
-
-    #mobileControls {
-        bottom: 12px;
-        padding: 0 12px;
-    }
+@media (min-width: 800px) {
 
     #movementControls {
-        width: 135px;
-        height: 135px;
+        left: 40px;
+        bottom: 40px;
     }
 
-    .controlButton {
-        width: 44px;
-        height: 44px;
-    }
-
-    #moveUp {
-        left: 45px;
-    }
-
-    #moveLeft {
-        top: 45px;
-    }
-
-    #moveDown {
-        left: 45px;
-    }
-
-    #moveRight {
-        top: 45px;
-    }
-
-    .actionButton {
-        width: 62px;
-        height: 62px;
+    #actionControls {
+        right: 40px;
+        bottom: 40px;
     }
 }
