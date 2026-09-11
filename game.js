@@ -24,6 +24,25 @@ if (startButton) {
         status.innerText = "GAME STARTED";
     });
 }
+const saveButton = document.getElementById("saveButton");
+
+if (saveButton) {
+    saveButton.addEventListener("click", () => {
+
+        const saveData = {
+            x: player.position.x,
+            y: player.position.y,
+            z: player.position.z
+        };
+
+        localStorage.setItem(
+            "sciFiGameSave",
+            JSON.stringify(saveData)
+        );
+
+        status.innerText = "GAME SAVED";
+    });
+}
 // ==========================
 // CONTROLS
 // ==========================
