@@ -208,21 +208,20 @@ if (jumping) {
 function updateCamera() {
 
     const targetX = player.position.x;
-    const targetY = player.position.y + 6;
     const targetZ = player.position.z + 10;
 
     camera.position.x +=
         (targetX - camera.position.x) * 0.12;
 
-    camera.position.y +=
-        (targetY - camera.position.y) * 0.12;
-
     camera.position.z +=
         (targetZ - camera.position.z) * 0.12;
 
+    // FIXED CAMERA HEIGHT
+    camera.position.y = 6;
+
     camera.lookAt(
         player.position.x,
-        player.position.y + 1.5,
+        1.5,
         player.position.z
     );
 }
