@@ -49,9 +49,19 @@ const menuButton = document.getElementById("menuButton");
 const gameMenu = document.getElementById("gameMenu");
 const closeMenuButton = document.getElementById("closeMenuButton");
 
-if (menuButton) {
-    menuButton.addEventListener("click", () => {
-        gameMenu.style.display = "flex";
+if (menuButton && gameMenu) {
+
+    menuButton.addEventListener("pointerdown", (e) => {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (gameMenu.style.display === "flex") {
+            gameMenu.style.display = "none";
+        } else {
+            gameMenu.style.display = "flex";
+        }
+
     });
 }
 
