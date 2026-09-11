@@ -189,20 +189,16 @@ function updatePlayer() {
     // ======================
     // GRAVITY
     // ======================
+if (jumping) {
+    velocityY -= 0.012;
+    player.position.y += velocityY;
 
-    if (jumping) {
-
-        velocityY -= 0.012;
-
-        player.position.y += velocityY;
-
-        if (player.position.y <= 0) {
-
-            player.position.y = 0;
-            velocityY = 0;
-            jumping = false;
-        }
+    if (player.position.y <= 0) {
+        player.position.y = 0;
+        velocityY = 0;
+        jumping = false;
     }
+}
 }
 
 // ==========================
