@@ -70,7 +70,7 @@ if (jumpButton) {
 
         if (!jumping) {
             jumping = true;
-            velocityY = 0.22;
+            velocityY = 0.45;
             status.innerText = "JUMP!";
         }
     });
@@ -122,7 +122,7 @@ window.addEventListener("keyup", (e) => {
 function jump() {
 
     if (!jumping) {
-        velocityY = 0.22;
+        velocityY = 0.45;
         jumping = true;
     }
 }
