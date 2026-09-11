@@ -1,9 +1,9 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
-import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
+
 export function createGame1(canvas) {
 
     const scene = new THREE.Scene();
-    const loader = new GLTFLoader();
+    
     // SKY
     scene.background = new THREE.Color(0x72a9d8);
 
