@@ -7,48 +7,32 @@ export function createCity(scene) {
     // =========================
 
     const roadMaterial = new THREE.MeshStandardMaterial({
-        color: 0x151a21,
-        roughness: 0.9,
-        metalness: 0.1
+        color: 0x171c24,
+        roughness: 0.85,
+        metalness: 0.15
     });
 
     const sidewalkMaterial = new THREE.MeshStandardMaterial({
-        color: 0x555b63,
-        roughness: 0.85
+        color: 0x4a5260,
+        roughness: 0.9
     });
 
-    const buildingMaterials = [
-        new THREE.MeshStandardMaterial({
-            color: 0x26313d,
-            roughness: 0.7,
-            metalness: 0.2
-        }),
-        new THREE.MeshStandardMaterial({
-            color: 0x303844,
-            roughness: 0.7,
-            metalness: 0.15
-        }),
-        new THREE.MeshStandardMaterial({
-            color: 0x202833,
-            roughness: 0.75,
-            metalness: 0.25
-        })
-    ];
+    const buildingMaterial = new THREE.MeshStandardMaterial({
+        color: 0x252d38,
+        roughness: 0.65,
+        metalness: 0.25
+    });
 
     const glassMaterial = new THREE.MeshStandardMaterial({
-        color: 0x123044,
-        emissive: 0x07364b,
-        emissiveIntensity: 0.7,
-        metalness: 0.45,
+        color: 0x102a3d,
+        emissive: 0x06354d,
+        emissiveIntensity: 0.8,
+        metalness: 0.5,
         roughness: 0.25
     });
 
     const neonMaterial = new THREE.MeshBasicMaterial({
         color: 0x00d9ff
-    });
-
-    const windowMaterial = new THREE.MeshBasicMaterial({
-        color: 0xb8efff
     });
 
     const roadLineMaterial = new THREE.MeshBasicMaterial({
@@ -59,55 +43,25 @@ export function createCity(scene) {
     // MAIN ROADS
     // =========================
 
-    const road1 = new THREE.Mesh(
-        new THREE.PlaneGeometry(500, 28),
+    const road = new THREE.Mesh(
+        new THREE.PlaneGeometry(500, 20),
         roadMaterial
     );
 
-    road1.rotation.x = -Math.PI / 2;
-    road1.position.y = 0.035;
-    road1.receiveShadow = true;
+    road.rotation.x = -Math.PI / 2;
+    road.position.y = 0.035;
+    road.receiveShadow = true;
+    scene.add(road);
 
-    scene.add(road1);
-
-    const road2 = new THREE.Mesh(
-        new THREE.PlaneGeometry(28, 500),
+    const crossRoad = new THREE.Mesh(
+        new THREE.PlaneGeometry(20, 500),
         roadMaterial
     );
 
-    road2.rotation.x = -Math.PI / 2;
-    road2.position.y = 0.04;
-    road2.receiveShadow = true;
-
-    scene.add(road2);
-
-    // =========================
-    // SIDEWALKS
-    // =========================
-
-    function sidewalk(x, z, w, d) {
-
-        const mesh = new THREE.Mesh(
-            new THREE.BoxGeometry(w, 0.18, d),
-            sidewalkMaterial
-        );
-
-        mesh.position.set(
-            x,
-            0.09,
-            z
-        );
-
-        mesh.receiveShadow = true;
-
-        scene.add(mesh);
-    }
-
-    sidewalk(0, 16, 500, 4);
-    sidewalk(0, -16, 500, 4);
-
-    sidewalk(16, 0, 4, 500);
-    sidewalk(-16, 0, 4, 500);
+    crossRoad.rotation.x = -Math.PI / 2;
+    crossRoad.position.y = 0.04;
+    crossRoad.receiveShadow = true;
+    scene.add(crossRoad);
 
     // =========================
     // ROAD CENTER LINES
@@ -121,11 +75,7 @@ export function createCity(scene) {
         );
 
         line.rotation.x = -Math.PI / 2;
-        line.position.set(
-            0,
-            0.065,
-            z
-        );
+        line.position.set(0, 0.06, z);
 
         scene.add(line);
     }
@@ -133,4 +83,143 @@ export function createCity(scene) {
     for (let x = -240; x <= 240; x += 12) {
 
         const line = new THREE.Mesh(
-            new THREE.PlaneGeometry(0
+            new THREE.PlaneGeometry(0.35, 5),
+            roadLineMaterial
+        );
+
+        line.rotation.x = -Math.PI / 2;
+        line.position.set(x, 0.07, 0);
+
+        scene.add(line);
+    }
+
+    // =========================
+    // BUILDING FUNCTION
+    // =========================
+
+    function building(x, z, w, h, d) {
+
+        const group = new THREE.Group();
+
+        const main = new THREE.Mesh(
+            new THREE.BoxGeometry(w, h, d),
+            buildingMaterial
+        );
+
+        main.position.y = h / 2;
+        main.castShadow = true;
+        main.receiveShadow = true;
+
+        group.add(main);
+
+        // Glass front
+        const glass = new THREE.Mesh(
+            new THREE.BoxGeometry(
+                w * 0.72,
+                h * 0.78,
+                0.08
+            ),
+            glassMaterial
+        );
+
+        glass.position.set(
+            0,
+            h * 0.55,
+            -d / 2 - 0.05
+        );
+
+        group.add(glass);
+
+        // Neon roof
+        const roof = new THREE.Mesh(
+            new THREE.BoxGeometry(
+                w * 0.85,
+                0.12,
+                d * 0.85
+            ),
+            neonMaterial
+        );
+
+        roof.position.y = h + 0.08;
+
+        group.add(roof);
+
+        // Vertical neon strip
+        const strip = new THREE.Mesh(
+            new THREE.BoxGeometry(
+                0.08,
+                h * 0.8,
+                0.08
+            ),
+            neonMaterial
+        );
+
+        strip.position.set(
+            w * 0.35,
+            h * 0.5,
+            -d / 2 - 0.1
+        );
+
+        group.add(strip);
+
+        group.position.set(x, 0, z);
+
+        scene.add(group);
+    }
+
+    // =========================
+    // CITY
+    // =========================
+
+    building(-30, -30, 16, 32, 16);
+    building(30, -30, 20, 48, 20);
+
+    building(-30, 30, 20, 28, 20);
+    building(30, 30, 16, 38, 16);
+
+    building(-60, -55, 22, 42, 20);
+    building(60, -55, 20, 34, 20);
+
+    building(-60, 55, 20, 38, 20);
+    building(60, 55, 24, 52, 22);
+
+    // =========================
+    // STREET LIGHT
+    // =========================
+
+    function streetLight(x, z) {
+
+        const pole = new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                0.08,
+                0.12,
+                5,
+                8
+            ),
+            buildingMaterial
+        );
+
+        pole.position.set(x, 2.5, z);
+        pole.castShadow = true;
+
+        scene.add(pole);
+
+        const lamp = new THREE.Mesh(
+            new THREE.SphereGeometry(0.22, 12, 8),
+            new THREE.MeshBasicMaterial({
+                color: 0xb8f5ff
+            })
+        );
+
+        lamp.position.set(x, 5, z);
+
+        scene.add(lamp);
+    }
+
+    streetLight(-10, -10);
+    streetLight(10, -10);
+    streetLight(-10, 10);
+    streetLight(10, 10);
+
+    return true;
+}
