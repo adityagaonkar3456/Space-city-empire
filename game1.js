@@ -72,7 +72,8 @@ sun.shadow.mapSize.width = 1024;
     ground.position.y = 0;
     ground.receiveShadow = true;
     scene.add(ground);
-
+   // CREATE CITY
+createCity(scene);
     // =========================
     // PLAYER
     // =========================
