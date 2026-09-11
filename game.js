@@ -317,27 +317,40 @@ window.addEventListener("pointerup", () => {
     rotatingCamera = false;
 });
 // ==========================
-// THIRD PERSON CAMERA
+// THIRD PERSON 360° CAMERA
 // ==========================
 
 function updateCamera() {
 
     const targetX = player.position.x;
-    const targetZ = player.position.z + 10;
+    const targetY = player.position.y + 1.5;
+    const targetZ = player.position.z;
 
+    // Camera orbit position
+    const desiredX =
+        targetX + Math.sin(cameraAngle) * cameraDistance;
+
+    const desiredZ =
+        targetZ + Math.cos(cameraAngle) * cameraDistance;
+
+    const desiredY =
+        targetY + cameraHeight;
+
+    // Smooth camera movement
     camera.position.x +=
-        (targetX - camera.position.x) * 0.12;
+        (desiredX - camera.position.x) * 0.12;
+
+    camera.position.y +=
+        (desiredY - camera.position.y) * 0.12;
 
     camera.position.z +=
-        (targetZ - camera.position.z) * 0.12;
+        (desiredZ - camera.position.z) * 0.12;
 
-    // FIXED CAMERA HEIGHT
-    camera.position.y = 6;
-
+    // Look at player
     camera.lookAt(
-        player.position.x,
-        1.5,
-        player.position.z
+        targetX,
+        targetY,
+        targetZ
     );
 }
 
