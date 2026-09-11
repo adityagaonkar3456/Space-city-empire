@@ -69,8 +69,9 @@ if (jumpButton) {
         e.preventDefault();
 
         if (!jumping) {
-            velocityY = 0.22;
             jumping = true;
+            velocityY = 0.22;
+            status.innerText = "JUMP!";
         }
     });
 }
