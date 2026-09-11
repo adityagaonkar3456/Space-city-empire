@@ -1,27 +1,20 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
 import { createCity } from "./game2.js";
-import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
 
 export function createGame1(canvas) {
 
     const scene = new THREE.Scene();
 
-    // =========================
-    // SKY + FOG
-    // =========================
-
+    // SKY
     scene.background = new THREE.Color(0x72a9d8);
 
     scene.fog = new THREE.Fog(
         0x72a9d8,
-        100,
-        450
+        80,
+        400
     );
 
-    // =========================
     // CAMERA
-    // =========================
-
     const camera = new THREE.PerspectiveCamera(
         60,
         window.innerWidth / window.innerHeight,
@@ -29,23 +22,14 @@ export function createGame1(canvas) {
         600
     );
 
-    camera.position.set(0, 6, 12);
+    camera.position.set(0, 5, 12);
 
-    // =========================
     // RENDERER
-    // =========================
-
     const renderer = new THREE.WebGLRenderer({
         canvas: canvas,
         antialias: false,
         powerPreference: "high-performance"
     });
-
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-    renderer.outputColorSpace =
-        THREE.SRGBColorSpace;
 
     renderer.setSize(
         window.innerWidth,
@@ -56,36 +40,35 @@ export function createGame1(canvas) {
         Math.min(window.devicePixelRatio || 1, 1.25)
     );
 
-    // =========================
-    // LIGHT
-    // =========================
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    scene.add(
-        new THREE.HemisphereLight(
-            0xffffff,
-            0x334433,
-            2.2
-        )
+    renderer.outputColorSpace =
+        THREE.SRGBColorSpace;
+
+    // LIGHT
+    const hemi = new THREE.HemisphereLight(
+        0xffffff,
+        0x334433,
+        2
     );
+
+    scene.add(hemi);
 
     const sun = new THREE.DirectionalLight(
         0xffffff,
-        1.8
+        2
     );
 
+    sun.position.set(80, 120, 60);
     sun.castShadow = true;
 
     sun.shadow.mapSize.width = 1024;
     sun.shadow.mapSize.height = 1024;
 
-    sun.position.set(80, 120, 60);
-
     scene.add(sun);
 
-    // =========================
     // GROUND
-    // =========================
-
     const ground = new THREE.Mesh(
         new THREE.PlaneGeometry(500, 500),
         new THREE.MeshLambertMaterial({
@@ -94,20 +77,15 @@ export function createGame1(canvas) {
     );
 
     ground.rotation.x = -Math.PI / 2;
-    ground.position.y = 0;
-
     ground.receiveShadow = true;
 
     scene.add(ground);
 
-    // =========================
     // CITY
-    // =========================
-
     createCity(scene);
 
     // =========================
-    // PLAYER GROUP
+    // PLAYER
     // =========================
 
     const player = new THREE.Group();
@@ -116,109 +94,183 @@ export function createGame1(canvas) {
 
     scene.add(player);
 
-    // =========================
-    // GLB HUMAN
-    // =========================
-
-    const loader = new GLTFLoader();
-
-    let humanModel = null;
-    let mixer = null;
-
-    loader.load(
-        "./models/human/casual_male-architectural_updated.glb",
-
-        (gltf) => {
-
-            humanModel = gltf.scene;
-
-            humanModel.scale.set(
-                1.8,
-                1.8,
-                1.8
-            );
-
-            humanModel.position.set(
-                0,
-                0,
-                0
-            );
-
-            humanModel.traverse((object) => {
-
-                if (object.isMesh) {
-
-                    object.castShadow = true;
-                    object.receiveShadow = true;
-
-                }
-
-            });
-
-            player.add(humanModel);
-
-            // =========================
-            // GLB ANIMATION
-            // =========================
-
-            if (gltf.animations &&
-                gltf.animations.length > 0) {
-
-                mixer = new THREE.AnimationMixer(
-                    humanModel
-                );
-
-                const action =
-                    mixer.clipAction(
-                        gltf.animations[0]
-                    );
-
-                action.play();
-            }
-
-            console.log(
-                "GLB HUMAN LOADED"
-            );
-
-        },
-
-        undefined,
-
-        (error) => {
-
-            console.error(
-                "GLB LOAD ERROR:",
-                error
-            );
-
-        }
+    // BODY
+    const body = new THREE.Mesh(
+        new THREE.CapsuleGeometry(
+            0.38,
+            1.0,
+            6,
+            12
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0x3155aa,
+            roughness: 0.7
+        })
     );
 
+    body.position.y = 1.15;
+    body.castShadow = true;
+
+    player.add(body);
+
+    // HEAD
+    const head = new THREE.Mesh(
+        new THREE.SphereGeometry(
+            0.34,
+            16,
+            16
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0xc98f6b,
+            roughness: 0.8
+        })
+    );
+
+    head.position.y = 2.05;
+    head.castShadow = true;
+
+    player.add(head);
+
+    // LEFT ARM
+    const leftArm = new THREE.Mesh(
+        new THREE.CapsuleGeometry(
+            0.11,
+            0.65,
+            5,
+            8
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0x3155aa
+        })
+    );
+
+    leftArm.position.set(
+        -0.5,
+        1.3,
+        0
+    );
+
+    leftArm.rotation.z = -0.12;
+    leftArm.castShadow = true;
+
+    player.add(leftArm);
+
+    // RIGHT ARM
+    const rightArm = new THREE.Mesh(
+        new THREE.CapsuleGeometry(
+            0.11,
+            0.65,
+            5,
+            8
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0x3155aa
+        })
+    );
+
+    rightArm.position.set(
+        0.5,
+        1.3,
+        0
+    );
+
+    rightArm.rotation.z = 0.12;
+    rightArm.castShadow = true;
+
+    player.add(rightArm);
+
+    // LEFT LEG
+    const leftLeg = new THREE.Mesh(
+        new THREE.CapsuleGeometry(
+            0.13,
+            0.75,
+            5,
+            8
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0x202838
+        })
+    );
+
+    leftLeg.position.set(
+        -0.2,
+        0.45,
+        0
+    );
+
+    leftLeg.castShadow = true;
+
+    player.add(leftLeg);
+
+    // RIGHT LEG
+    const rightLeg = new THREE.Mesh(
+        new THREE.CapsuleGeometry(
+            0.13,
+            0.75,
+            5,
+            8
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0x202838
+        })
+    );
+
+    rightLeg.position.set(
+        0.2,
+        0.45,
+        0
+    );
+
+    rightLeg.castShadow = true;
+
+    player.add(rightLeg);
+
+    // PLAYER PARTS
+    const playerParts = {
+        body,
+        head,
+        leftArm,
+        rightArm,
+        leftLeg,
+        rightLeg
+    };
+
     // =========================
-    // PLAYER SHADOW
+    // ANIMATION
     // =========================
 
-    player.traverse((object) => {
+    let walkTime = 0;
 
-        if (object.isMesh) {
+    function updatePlayerAnimation(
+        delta,
+        moving,
+        running
+    ) {
 
-            object.castShadow = true;
-            object.receiveShadow = true;
+        if (!moving) {
 
+            leftArm.rotation.x = 0;
+            rightArm.rotation.x = 0;
+
+            leftLeg.rotation.x = 0;
+            rightLeg.rotation.x = 0;
+
+            return;
         }
 
-    });
+        const speed =
+            running ? 10 : 6;
 
-    // =========================
-    // UPDATE GLB ANIMATION
-    // =========================
+        walkTime += delta * speed;
 
-    function updatePlayerAnimation(delta) {
+        const swing =
+            Math.sin(walkTime) * 0.65;
 
-        if (mixer) {
-            mixer.update(delta);
-        }
+        leftArm.rotation.x = swing;
+        rightArm.rotation.x = -swing;
 
+        leftLeg.rotation.x = -swing;
+        rightLeg.rotation.x = swing;
     }
 
     return {
@@ -227,6 +279,7 @@ export function createGame1(canvas) {
         camera,
         renderer,
         player,
+        playerParts,
         updatePlayerAnimation
     };
 }
