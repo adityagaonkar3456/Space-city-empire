@@ -9,7 +9,21 @@ const scene = game.scene;
 const camera = game.camera;
 const renderer = game.renderer;
 const player = game.player;
+const startScreen = document.getElementById("startScreen");
+const startButton = document.getElementById("startButton");
 
+let gameStarted = false;
+
+if (startButton) {
+    startButton.addEventListener("click", () => {
+
+        gameStarted = true;
+
+        startScreen.style.display = "none";
+
+        status.innerText = "GAME STARTED";
+    });
+}
 // ==========================
 // CONTROLS
 // ==========================
@@ -234,9 +248,10 @@ function animate() {
 
     requestAnimationFrame(animate);
 
+    if (gameStarted) {
     updatePlayer();
     updateCamera();
-
+}
     renderer.render(scene, camera);
 }
 
