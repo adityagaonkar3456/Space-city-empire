@@ -55,7 +55,8 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
         0xffffff,
         1.8
     );
-
+    sun.castShadow = true;
+sun.shadow.mapSize.width = 1024;
     sun.position.set(80, 120, 60);
     scene.add(sun);
 
