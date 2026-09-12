@@ -11,6 +11,27 @@ export function createMission1(scene, player, statusElement) {
     };
 
     // =========================
+    // DEBUG DISPLAY ELEMENT
+    // =========================
+    const debugDisplay = document.createElement("div");
+    debugDisplay.id = "mission1-debug-display";
+    debugDisplay.style.position = "fixed";
+    debugDisplay.style.top = "20px";
+    debugDisplay.style.right = "20px";
+    debugDisplay.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+    debugDisplay.style.color = "#00ff00";
+    debugDisplay.style.fontFamily = "monospace";
+    debugDisplay.style.fontSize = "14px";
+    debugDisplay.style.padding = "15px";
+    debugDisplay.style.borderRadius = "8px";
+    debugDisplay.style.border = "2px solid #00ff00";
+    debugDisplay.style.zIndex = "9999";
+    debugDisplay.style.lineHeight = "1.6";
+    debugDisplay.style.minWidth = "200px";
+    debugDisplay.style.pointerEvents = "none";
+    document.body.appendChild(debugDisplay);
+
+    // =========================
     // MISSION NPC
     // =========================
 
@@ -128,8 +149,18 @@ export function createMission1(scene, player, statusElement) {
 
         // Log only when distance <= 10
         if (distance <= 10) {
-            console.log(`[Mission1 DEBUG] Player: (${player.position.x.toFixed(2)}, ${player.position.z.toFixed(2)}) | NPC: (${npc.position.x.toFixed(2)}, ${npc.position.z.toFixed(2)}) | Distance: ${distance.toFixed(2)} | Active: ${mission.active} | Completed: ${mission.completed}`);
+            console.log(`[Mission1 DEBUG] Player: (${player.position.x.toFixed(2)}, ${player.position.z.toFixed(2)}) | NPC: (${npc.position.x.toFixed(2)}, ${npc.position.z.toFixed(2)}) | Distance: ${distance.toFixed(2)}`);
         }
+
+        // Update debug display on screen
+        debugDisplay.innerHTML = `
+<strong>MISSION 1 DEBUG</strong><br>
+Player X/Z: ${player.position.x.toFixed(2)} / ${player.position.z.toFixed(2)}<br>
+NPC X/Z: ${npc.position.x.toFixed(2)} / ${npc.position.z.toFixed(2)}<br>
+Distance: ${distance.toFixed(2)}<br>
+mission.active: ${mission.active}<br>
+mission.completed: ${mission.completed}
+        `;
 
         // Player reaches mission area
         if (!mission.active && distance < 8) {
