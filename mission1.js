@@ -152,16 +152,7 @@ export function createMission1(scene, player, statusElement) {
             console.log(`[Mission1 DEBUG] Player: (${player.position.x.toFixed(2)}, ${player.position.z.toFixed(2)}) | NPC: (${npc.position.x.toFixed(2)}, ${npc.position.z.toFixed(2)}) | Distance[...]
         }
 
-        // Update debug display on screen
-        debugDisplay.innerHTML = `
-<strong>MISSION 1 DEBUG</strong><br>
-Player X/Z: ${player.position.x.toFixed(2)} / ${player.position.z.toFixed(2)}<br>
-NPC X/Z: ${npc.position.x.toFixed(2)} / ${npc.position.z.toFixed(2)}<br>
-Distance: ${distance.toFixed(2)}<br>
-mission.active: ${mission.active}<br>
-mission.completed: ${mission.completed}<br>
-COMPLETION CHECK: ${mission.active && distance < 5 ? "YES" : "NO"}
-        `;
+         
 
         // Player reaches mission area
         if (!mission.active && distance < 8) {
