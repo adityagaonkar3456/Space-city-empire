@@ -365,6 +365,9 @@ function animate() {
 
     if (gameStarted) {
     updatePlayer();
+        if (scene.userData.updateMovingCar) {
+    scene.userData.updateMovingCar();
+}
 
 if (game.updatePlayerAnimation) {
     game.updatePlayerAnimation(
