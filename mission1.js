@@ -72,6 +72,8 @@ export function createMission1(scene, player, statusElement) {
 
         mission.active = true;
 
+        console.log(`[Mission1 DEBUG - START] Player: (${player.position.x.toFixed(2)}, ${player.position.z.toFixed(2)}) | NPC: (${npc.position.x.toFixed(2)}, ${npc.position.z.toFixed(2)}) | Active: ${mission.active} | Completed: ${mission.completed}`);
+
         if (statusElement) {
             statusElement.innerText =
                 "MISSION START: Meet the contact";
@@ -93,6 +95,8 @@ export function createMission1(scene, player, statusElement) {
 
         mission.completed = true;
         mission.active = false;
+
+        console.log(`[Mission1 DEBUG - COMPLETE] Player: (${player.position.x.toFixed(2)}, ${player.position.z.toFixed(2)}) | NPC: (${npc.position.x.toFixed(2)}, ${npc.position.z.toFixed(2)}) | Active: ${mission.active} | Completed: ${mission.completed}`);
 
         marker.visible = false;
 
@@ -116,21 +120,27 @@ export function createMission1(scene, player, statusElement) {
         }
 
         const dx = player.position.x - npc.position.x;
-const dz = player.position.z - npc.position.z;
+        const dz = player.position.z - npc.position.z;
 
-const distance = Math.sqrt(
-    dx * dx + dz * dz
-);
+        const distance = Math.sqrt(
+            dx * dx + dz * dz
+        );
+
+        // Log only when distance <= 10
+        if (distance <= 10) {
+            console.log(`[Mission1 DEBUG] Player: (${player.position.x.toFixed(2)}, ${player.position.z.toFixed(2)}) | NPC: (${npc.position.x.toFixed(2)}, ${npc.position.z.toFixed(2)}) | Distance: ${distance.toFixed(2)} | Active: ${mission.active} | Completed: ${mission.completed}`);
+        }
 
         // Player reaches mission area
         if (!mission.active && distance < 8) {
             startMission();
         }
 
-        // Player reaches NPC
+        // Player reaches NPC - log completion condition check
         if (mission.active && distance < 5) {
-    completeMission();
-}
+            console.log(`[Mission1 DEBUG - COMPLETION CHECK] Distance ${distance.toFixed(2)} < 5, calling completeMission()`);
+            completeMission();
+        }
 
         // Floating marker
         if (marker.visible) {
