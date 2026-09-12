@@ -1,5 +1,5 @@
 import { createGame1 } from "./game1.js";
-import { createMission1 } from "./mission1.js";
+
 
 const canvas = document.getElementById("gameCanvas");
 const status = {
@@ -7,11 +7,7 @@ const status = {
 };
 
 const game = createGame1(canvas);
-const mission1 = createMission1(
-    scene,
-    player,
-    status
-);
+
 
 const scene = game.scene;
 const camera = game.camera;
@@ -371,7 +367,7 @@ function animate() {
 
     if (gameStarted) {
     updatePlayer();
-        mission1.update();
+        
         if (scene.userData.updateMovingCar) {
     scene.userData.updateMovingCar();
 }
