@@ -6,10 +6,14 @@ export function createMission1(scene, player, statusElement) {
         active: false,
         completed: false,
         reward: 100,
-        title: "FIRST CONTACT"
+        title: "FIRST CONTACT",
+        objective: "Meet the mission contact"
     };
 
-    // Mission NPC
+    // =========================
+    // MISSION NPC
+    // =========================
+
     const npc = new THREE.Group();
 
     const body = new THREE.Mesh(
@@ -20,6 +24,7 @@ export function createMission1(scene, player, statusElement) {
     );
 
     body.position.y = 1;
+    body.castShadow = true;
     npc.add(body);
 
     const head = new THREE.Mesh(
@@ -30,14 +35,23 @@ export function createMission1(scene, player, statusElement) {
     );
 
     head.position.y = 1.85;
+    head.castShadow = true;
     npc.add(head);
 
     npc.position.set(12, 0, -12);
     scene.add(npc);
 
-    // Mission marker
+    // =========================
+    // MISSION MARKER
+    // =========================
+
     const marker = new THREE.Mesh(
-        new THREE.CylinderGeometry(1.2, 1.2, 0.12, 32),
+        new THREE.CylinderGeometry(
+            1.2,
+            1.2,
+            0.12,
+            32
+        ),
         new THREE.MeshBasicMaterial({
             color: 0xffd21f
         })
@@ -46,50 +60,80 @@ export function createMission1(scene, player, statusElement) {
     marker.position.set(12, 0.08, -12);
     scene.add(marker);
 
-    // Mission title
+    // =========================
+    // START MISSION
+    // =========================
+
     function startMission() {
+
+        if (mission.active || mission.completed) {
+            return;
+        }
+
         mission.active = true;
 
         if (statusElement) {
             statusElement.innerText =
-                "MISSION: Go to the mission contact";
+                "MISSION START: Meet the contact";
         }
+
+        console.log("MISSION 1 STARTED");
+        console.log("Story: Someone is waiting for you.");
     }
 
-    // Mission update
+    // =========================
+    // COMPLETE MISSION
+    // =========================
+
+    function completeMission() {
+
+        if (mission.completed) {
+            return;
+        }
+
+        mission.completed = true;
+        mission.active = false;
+
+        marker.visible = false;
+
+        if (statusElement) {
+            statusElement.innerText =
+                "MISSION COMPLETE  +$" + mission.reward;
+        }
+
+        console.log("MISSION 1 COMPLETE");
+        console.log("Reward: $" + mission.reward);
+    }
+
+    // =========================
+    // UPDATE
+    // =========================
+
     function update() {
 
-        if (mission.completed) return;
+        if (mission.completed) {
+            return;
+        }
 
-        const distance = player.position.distanceTo(npc.position);
+        const distance =
+            player.position.distanceTo(npc.position);
 
-        // Automatically start when player gets close
+        // Player reaches mission area
         if (!mission.active && distance < 8) {
             startMission();
         }
 
-        // Complete mission
+        // Player reaches NPC
         if (mission.active && distance < 2.5) {
-
-            mission.completed = true;
-
-            marker.visible = false;
-
-            if (statusElement) {
-                statusElement.innerText =
-                    "MISSION COMPLETE +$" + mission.reward;
-            }
-
-            console.log(
-                "Mission 1 completed. Reward:",
-                mission.reward
-            );
+            completeMission();
         }
 
-        // Floating marker effect
+        // Floating marker
         if (marker.visible) {
+
             marker.position.y =
-                0.15 + Math.sin(Date.now() * 0.004) * 0.12;
+                0.15 +
+                Math.sin(Date.now() * 0.004) * 0.12;
 
             marker.rotation.y += 0.02;
         }
@@ -100,6 +144,7 @@ export function createMission1(scene, player, statusElement) {
         npc,
         marker,
         startMission,
+        completeMission,
         update
     };
 }
