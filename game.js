@@ -1,5 +1,5 @@
 import { createGame1 } from "./game1.js";
-
+import { createMissionSystem } from "./mission_connector.js";
 
 const canvas = document.getElementById("gameCanvas");
 const status = {
@@ -13,6 +13,11 @@ const scene = game.scene;
 const camera = game.camera;
 const renderer = game.renderer;
 const player = game.player;
+const missionSystem = createMissionSystem(
+    scene,
+    player,
+    status
+);
 const startScreen = document.getElementById("startScreen");
 const startButton = document.getElementById("startButton");
 
@@ -367,7 +372,7 @@ function animate() {
 
     if (gameStarted) {
     updatePlayer();
-        
+        missionSystem.update();
         if (scene.userData.updateMovingCar) {
     scene.userData.updateMovingCar();
 }
