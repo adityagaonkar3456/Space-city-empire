@@ -115,8 +115,12 @@ export function createMission1(scene, player, statusElement) {
             return;
         }
 
-        const distance =
-            player.position.distanceTo(npc.position);
+        const dx = player.position.x - npc.position.x;
+const dz = player.position.z - npc.position.z;
+
+const distance = Math.sqrt(
+    dx * dx + dz * dz
+);
 
         // Player reaches mission area
         if (!mission.active && distance < 8) {
@@ -124,9 +128,9 @@ export function createMission1(scene, player, statusElement) {
         }
 
         // Player reaches NPC
-        if (mission.active && distance < 2.5) {
-            completeMission();
-        }
+        if (mission.active && distance < 5) {
+    completeMission();
+}
 
         // Floating marker
         if (marker.visible) {
