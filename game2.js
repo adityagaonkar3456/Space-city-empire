@@ -346,21 +346,18 @@ function createCar(x, z, rotation = 0) {
 createCar(-5, -12, 0);
 createCar(5, 12, Math.PI);
 
-    // CITY V1.3 - MOVING TEST CAR
+    // CITY V1.3 - MOVING CAR
 
 const movingCar = createCar(-220, -6, 0);
 
 movingCar.userData.speed = 0.12;
 
-function updateMovingCar() {
+scene.userData.updateMovingCar = function () {
     movingCar.position.x += movingCar.userData.speed;
 
-    // Reach the end of the road -> return to start
     if (movingCar.position.x > 220) {
         movingCar.position.x = -220;
     }
-}
-
-scene.userData.updateMovingCar = updateMovingCar;
+};
     return true;
 }
